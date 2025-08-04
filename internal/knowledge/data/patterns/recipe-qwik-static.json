@@ -1,0 +1,40 @@
+{
+  "patternId": "recipe-qwik-static",
+  "name": "Qwik Static",
+  "description": "Recipe Qwik Static application",
+  "framework": "Recipe Qwik Static",
+  "language": "Unknown",
+  "tags": [
+    "static"
+  ],
+  "services": [
+    {
+      "enableSubdomainAccess": true,
+      "hostname": "app",
+      "type": "static"
+    }
+  ],
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "base": "nodejs@20",
+          "buildCommands": [
+            "pnpm i",
+            "pnpm build"
+          ],
+          "deployFiles": [
+            "public",
+            "dist/~"
+          ]
+        },
+        "run": {
+          "base": "static"
+        },
+        "setup": "app"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-qwik-static-main",
+  "deploymentType": "local"
+}

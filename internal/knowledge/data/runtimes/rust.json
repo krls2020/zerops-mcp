@@ -1,0 +1,17 @@
+{
+  "runtime": "rust",
+  "displayName": "Rust",
+  "versions": {
+    "available": ["latest"],
+    "default": "latest"
+  },
+  "buildConfig": {
+    "buildCommands": ["cargo build --release"],
+    "deployFiles": ["target/release/*"],
+    "cache": "target"
+  },
+  "runConfig": {
+    "startCommand": "./app",
+    "port": 8080
+  }
+}

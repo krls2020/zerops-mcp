@@ -1,0 +1,62 @@
+{
+  "patternId": "recipe-graylog",
+  "name": "Graylog",
+  "description": "Graylog service for Zerops",
+  "framework": "Recipe Graylog",
+  "language": "Unknown",
+  "tags": [],
+  "services": null,
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "base": "go@1.22",
+          "deployFiles": [
+            "opensearch.yml",
+            "jvm.options",
+            "server.conf"
+          ],
+          "os": "ubuntu"
+        },
+        "run": {
+          "base": "go@1.22",
+          "initCommands": [
+            "sudo cp /var/www/opensearch.yml /etc/opensearch/",
+            "sudo cp /var/www/jvm.options /etc/opensearch/",
+            "sudo cp /var/www/server.conf /etc/graylog/server/",
+            "sudo systemctl daemon-reload",
+            "sudo systemctl enable mongod.service",
+            "sudo systemctl enable opensearch.service",
+            "sudo systemctl restart mongod.service",
+            "sudo systemctl restart opensearch.service"
+          ],
+          "os": "ubuntu",
+          "ports": [
+            {
+              "httpSupport": true,
+              "port": 9000
+            }
+          ],
+          "prepareCommands": [
+            "curl -fsSL https://pgp.mongodb.com/server-6.0.asc | sudo gpg -o /usr/share/keyrings/mongodb-server-6.0.gpg --dearmor",
+            "echo \"deb [ arch=amd64,arm64 signed-by=/usr/share/keyrings/mongodb-server-6.0.gpg ] https://repo.mongodb.org/apt/ubuntu jammy/mongodb-org/6.0 multiverse\" | sudo tee /etc/apt/sources.list.d/mongodb-org-6.0.list",
+            "curl -o- https://artifacts.opensearch.org/publickeys/opensearch.pgp | sudo apt-key add -",
+            "echo \"deb https://artifacts.opensearch.org/releases/bundle/opensearch/2.x/apt stable main\" | sudo tee -a /etc/apt/sources.list.d/opensearch-2.x.list",
+            "sudo wget https://packages.graylog2.org/repo/packages/graylog-6.0-repository_latest.deb",
+            "sudo dpkg -i graylog-6.0-repository_latest.deb",
+            "sudo apt-get -y update",
+            "sudo apt-get install -y mongodb-org",
+            "sudo echo \"OPENSEARCH_INITIAL_ADMIN_PASSWORD=\\\"MyStrongPassword123\\\"\" \u003e\u003e /etc/environment",
+            "sudo echo 'vm.max_map_count=262144' | sudo tee -a /etc/sysctl.conf",
+            "sudo apt-get install -y opensearch",
+            "sudo apt-get -y install graylog-server"
+          ],
+          "start": "sudo /usr/share/graylog-server/bin/graylog-server"
+        },
+        "setup": "graylog"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-graylog-main",
+  "deploymentType": "git"
+}

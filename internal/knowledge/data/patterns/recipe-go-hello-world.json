@@ -1,0 +1,36 @@
+{
+  "patternId": "recipe-go-hello-world",
+  "name": "Go Hello World",
+  "description": "Hello World application",
+  "framework": "Hello World",
+  "language": "Go",
+  "tags": [
+    "go"
+  ],
+  "services": null,
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "base": "go@1",
+          "buildCommands": [
+            "go build -o app main.go"
+          ],
+          "deploy": "app"
+        },
+        "run": {
+          "ports": [
+            {
+              "httpSupport": true,
+              "port": 8080
+            }
+          ],
+          "start": "./app"
+        },
+        "setup": "helloworld"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-go-hello-world-main",
+  "deploymentType": "local"
+}

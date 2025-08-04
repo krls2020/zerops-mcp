@@ -1,0 +1,51 @@
+{
+  "patternId": "recipe-meilisearch",
+  "name": "Meilisearch",
+  "description": "Meilisearch service for Zerops",
+  "framework": "Recipe Meilisearch",
+  "language": "Unknown",
+  "tags": [],
+  "services": [
+    {
+      "buildFromGit": "https://github.com/zeropsio/recipe-meilisearch",
+      "enableSubdomainAccess": true,
+      "envSecrets": {
+        "MEILI_MASTER_KEY": "\u003c@generateRandomString(\u003c16\u003e)\u003e"
+      },
+      "hostname": "meilisearch",
+      "type": "ubuntu@22.04"
+    }
+  ],
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "buildCommands": [
+            "curl -L https://install.meilisearch.com | sh"
+          ],
+          "deployFiles": [
+            "meilisearch"
+          ]
+        },
+        "run": {
+          "base": "go@1",
+          "envVariables": {
+            "MEILI_HTTP_ADDR": "[::]:7700"
+          },
+          "os": "ubuntu",
+          "ports": [
+            {
+              "httpSupport": true,
+              "port": 7700,
+              "protocol": "tcp"
+            }
+          ],
+          "start": "./meilisearch"
+        },
+        "setup": "meilisearch"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-meilisearch-main",
+  "deploymentType": "git"
+}

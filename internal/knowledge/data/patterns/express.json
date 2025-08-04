@@ -1,0 +1,111 @@
+{
+  "bestPractices": [
+    "Use connection pooling for database",
+    "Implement request validation",
+    "Add rate limiting",
+    "Use compression middleware",
+    "Log with structured logging"
+  ],
+  "commonIssues": [
+    {
+      "issue": "Database connection timeout",
+      "solution": "Use connection pooling with pg or mysql2"
+    },
+    {
+      "issue": "Memory leaks",
+      "solution": "Use PM2 or implement graceful shutdown"
+    }
+  ],
+  "description": "Express.js REST API with PostgreSQL and Redis cache",
+  "exampleCode": {
+    "database": "const { Pool } = require('pg');\nconst pool = new Pool({\n  host: process.env.DB_HOST,\n  port: process.env.DB_PORT,\n  database: process.env.DB_NAME,\n  user: process.env.DB_USER,\n  password: process.env.DB_PASSWORD\n});",
+    "server": "const express = require('express');\nconst app = express();\n\napp.get('/health', (req, res) =\u003e {\n  res.json({ status: 'ok' });\n});\n\napp.listen(process.env.PORT || 3000);"
+  },
+  "framework": "Express.js",
+  "language": "JavaScript/TypeScript",
+  "name": "Express.js API",
+  "patternId": "express-api",
+  "services": [
+    {
+      "enableSubdomainAccess": true,
+      "envVariables": {
+        "DB_HOST": "${db_hostname}",
+        "DB_NAME": "${db_dbName}",
+        "DB_PASSWORD": "${db_password}",
+        "DB_PORT": "${db_port}",
+        "DB_USER": "${db_user}",
+        "NODE_ENV": "production",
+        "PORT": "3000",
+        "REDIS_HOST": "${cache_hostname}",
+        "REDIS_PORT": "${cache_port}"
+      },
+      "hostname": "api",
+      "maxContainers": 5,
+      "minContainers": 2,
+      "mode": "HA",
+      "ports": [
+        {
+          "httpSupport": true,
+          "port": 3000
+        }
+      ],
+      "type": "nodejs@20"
+    },
+    {
+      "hostname": "db",
+      "mode": "HA",
+      "type": "postgresql@16"
+    },
+    {
+      "hostname": "cache",
+      "mode": "NON_HA",
+      "type": "valkey@7.2"
+    }
+  ],
+  "setupInstructions": [
+    "Set up database connection pooling",
+    "Configure Redis client",
+    "Implement health check endpoint",
+    "Set up error handling middleware"
+  ],
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "base": "nodejs@20",
+          "buildCommands": [
+            "npm ci --production"
+          ],
+          "cache": [
+            "node_modules"
+          ],
+          "deployFiles": [
+            "src",
+            "package.json",
+            "package-lock.json",
+            "node_modules"
+          ]
+        },
+        "run": {
+          "base": "nodejs@20",
+          "healthCheck": {
+            "httpGet": {
+              "path": "/health",
+              "port": 3000
+            },
+            "initialDelaySeconds": 10,
+            "periodSeconds": 5
+          },
+          "ports": [
+            {
+              "httpSupport": true,
+              "port": 3000
+            }
+          ],
+          "start": "node src/server.js"
+        },
+        "setup": "api"
+      }
+    ]
+  }
+}

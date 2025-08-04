@@ -1,0 +1,67 @@
+{
+  "patternId": "recipe-python",
+  "name": "Python",
+  "description": "Recipe Python application",
+  "framework": "Recipe Python",
+  "language": "Python",
+  "tags": [
+    "python"
+  ],
+  "services": [
+    {
+      "enableSubdomainAccess": true,
+      "hostname": "api",
+      "type": "python@3.12"
+    },
+    {
+      "hostname": "db",
+      "mode": "NON_HA",
+      "priority": 1,
+      "type": "postgresql@16"
+    }
+  ],
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "addToRunPrepare": [
+            "requirements.txt"
+          ],
+          "base": "python@3.12",
+          "deploy": [
+            "app.py"
+          ]
+        },
+        "run": {
+          "base": "python@3.12",
+          "envVariables": {
+            "DB_HOST": "${db_hostname}",
+            "DB_NAME": "db",
+            "DB_PASS": "${db_password}",
+            "DB_PORT": "${db_port}",
+            "DB_USER": "${db_user}"
+          },
+          "healthCheck": {
+            "httpGet": {
+              "path": "/status",
+              "port": 8000
+            }
+          },
+          "ports": [
+            {
+              "httpSupport": true,
+              "port": 8000
+            }
+          ],
+          "prepareCommands": [
+            "python3 -m pip install --ignore-installed -r requirements.txt"
+          ],
+          "start": "python3 app.py"
+        },
+        "setup": "api"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-python-main",
+  "deploymentType": "local"
+}

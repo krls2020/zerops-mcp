@@ -1,0 +1,55 @@
+{
+  "patternId": "recipe-turborepo",
+  "name": "Turborepo",
+  "description": "Recipe Turborepo application",
+  "framework": "Recipe Turborepo",
+  "language": "Unknown",
+  "tags": [],
+  "services": [
+    {
+      "enableSubdomainAccess": true,
+      "hostname": "frontend",
+      "type": "nodejs@20"
+    }
+  ],
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "base": "nodejs@20",
+          "buildCommands": [
+            "pnpm i",
+            "pnpm run build"
+          ],
+          "deployFiles": "/"
+        },
+        "run": {
+          "base": "nodejs@20",
+          "ports": [
+            {
+              "httpSupport": true,
+              "port": 3000
+            },
+            {
+              "httpSupport": true,
+              "port": 3001
+            }
+          ],
+          "startCommands": [
+            {
+              "command": "pnpm run start:web",
+              "name": "web"
+            },
+            {
+              "command": "pnpm run start:docs",
+              "name": "docs"
+            }
+          ]
+        },
+        "setup": "frontend"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-turborepo-main",
+  "deploymentType": "local"
+}

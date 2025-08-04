@@ -1,0 +1,71 @@
+{
+  "patternId": "recipe-forgejo",
+  "name": "Forgejo",
+  "description": "Forgejo service for Zerops",
+  "framework": "Recipe Forgejo",
+  "language": "Unknown",
+  "tags": [],
+  "services": [
+    {
+      "buildFromGit": "https://github.com/zeropsio/recipe-forgejo",
+      "enableSubdomainAccess": true,
+      "hostname": "app",
+      "type": "ubuntu@22.04"
+    },
+    {
+      "hostname": "db",
+      "mode": "NON_HA",
+      "type": "postgresql@16"
+    }
+  ],
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "base": "ubuntu@22.04",
+          "deployFiles": [
+            "/"
+          ]
+        },
+        "run": {
+          "base": "ubuntu@22.04",
+          "envVariables": {
+            "DB_HOST": "${hostname}",
+            "DB_NAME": "db",
+            "DB_PASS": "${password}",
+            "DB_PORT": 5432,
+            "DB_USER": "db"
+          },
+          "os": "ubuntu",
+          "ports": [
+            {
+              "httpSupport": true,
+              "port": 3000
+            }
+          ],
+          "prepareCommands": [
+            "wget https://codeberg.org/forgejo/forgejo/releases/download/v8.0.3/forgejo-8.0.3-linux-amd64",
+            "chmod +x forgejo-8.0.3-linux-amd64",
+            "gpg --keyserver keys.openpgp.org --recv EB114F5E6C0DC2BCDD183550A4B61A2DC5923710",
+            "wget https://codeberg.org/forgejo/forgejo/releases/download/v8.0.3/forgejo-8.0.3-linux-amd64.asc",
+            "gpg --verify forgejo-8.0.3-linux-amd64.asc forgejo-8.0.3-linux-amd64",
+            "sudo cp forgejo-8.0.3-linux-amd64 /usr/local/bin/forgejo",
+            "sudo chmod 755 /usr/local/bin/forgejo",
+            "curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo bash",
+            "sudo apt install git-lfs",
+            "git lfs install",
+            "sudo adduser --system --shell /bin/bash --gecos 'Git Version Control' --group --disabled-password --home /home/git git",
+            "sudo mkdir /var/lib/forgejo",
+            "sudo chown git:git /var/lib/forgejo \u0026\u0026 sudo chmod 750 /var/lib/forgejo",
+            "sudo mkdir /etc/forgejo",
+            "sudo chown root:git /etc/forgejo \u0026\u0026 sudo chmod 770 /etc/forgejo"
+          ],
+          "start": "exec /usr/local/bin/forgejo web"
+        },
+        "setup": "app"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-forgejo-main",
+  "deploymentType": "git"
+}

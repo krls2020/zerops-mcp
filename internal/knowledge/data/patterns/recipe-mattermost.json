@@ -1,0 +1,89 @@
+{
+  "patternId": "recipe-mattermost",
+  "name": "Mattermost",
+  "description": "Mattermost service for Zerops",
+  "framework": "Recipe Mattermost",
+  "language": "Unknown",
+  "tags": [],
+  "services": [
+    {
+      "hostname": "pgdb",
+      "mode": "NON_HA",
+      "priority": 10,
+      "type": "postgresql@16"
+    },
+    {
+      "hostname": "s3",
+      "objectStoragePolicy": "private",
+      "objectStorageSize": 2,
+      "priority": 10,
+      "type": "object-storage"
+    },
+    {
+      "buildFromGit": "https://github.com/zeropsio/recipe-mattermost@main",
+      "enableSubdomainAccess": true,
+      "hostname": "mattermost",
+      "maxContainers": 1,
+      "minContainers": 1,
+      "priority": 1,
+      "type": "ubuntu@22.04"
+    }
+  ],
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "deployFiles": "migrate.sh",
+          "os": "alpine"
+        },
+        "run": {
+          "base": "22.04",
+          "envVariables": {
+            "MM_CONFIG": "${connectionString}",
+            "MM_FILESETTINGS_AMAZONS3ACCESSKEYID": "${s3_accessKeyId}",
+            "MM_FILESETTINGS_AMAZONS3BUCKET": "${s3_bucketName}",
+            "MM_FILESETTINGS_AMAZONS3ENDPOINT": "storage-prg1.zerops.io",
+            "MM_FILESETTINGS_AMAZONS3SECRETACCESSKEY": "${s3_secretAccessKey}",
+            "MM_FILESETTINGS_DRIVERNAME": "amazons3",
+            "MM_LOCALIZATIONSETTINGS_DEFAULTCLIENTLOCALE": "en",
+            "MM_LOCALIZATIONSETTINGS_DEFAULTSERVERLOCALE": "en",
+            "MM_LOGSETTINGS_CONSOLEJSON": "false",
+            "MM_LOGSETTINGS_ENABLEFILE": "false",
+            "MM_SQLSETTINGS_DATASOURCE": "${connectionString}",
+            "MM_SQLSETTINGS_DRIVERNAME": "postgres",
+            "connectionString": "postgres://${pgdb_user}:${pgdb_password}@${pgdb_hostname}:${pgdb_port}?sslmode=disable\u0026connect_timeout=10\u0026binary_parameters=yes"
+          },
+          "healthCheck": {
+            "httpGet": {
+              "host": "localhost",
+              "path": "/api/v4/system/ping",
+              "port": 8065,
+              "scheme": "http"
+            }
+          },
+          "initCommands": [
+            "./migrate.sh"
+          ],
+          "os": "ubuntu",
+          "ports": [
+            {
+              "httpSupport": true,
+              "port": 8065
+            }
+          ],
+          "prepareCommands": [
+            "curl -o- https://deb.packages.mattermost.com/repo-setup.sh | sudo bash -s mattermost",
+            "sudo apt-get update",
+            "sudo apt-get install mattermost postgresql-client -y",
+            "sudo systemctl disable mattermost",
+            "sudo systemctl stop mattermost"
+          ],
+          "start": "/usr/bin/mattermost server"
+        },
+        "setup": "mattermost"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-mattermost-main",
+  "deploymentType": "git"
+}

@@ -1,0 +1,56 @@
+{
+  "patternId": "recipe-uptime-kuma",
+  "name": "Uptime Kuma",
+  "description": "Recipe Uptime Kuma application",
+  "framework": "Recipe Uptime Kuma",
+  "language": "Unknown",
+  "tags": [],
+  "services": [
+    {
+      "enableSubdomainAccess": true,
+      "hostname": "app",
+      "type": "nodejs@20"
+    },
+    {
+      "hostname": "db",
+      "mode": "NON_HA",
+      "type": "mariadb@10.6"
+    }
+  ],
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "base": "nodejs@20",
+          "buildCommands": [
+            "cd uptime-kuma\nnpm ci\nnpm run build\n"
+          ],
+          "deployFiles": [
+            "./uptime-kuma/~"
+          ]
+        },
+        "run": {
+          "base": "nodejs@20",
+          "envVariables": {
+            "UPTIME_KUMA_DB_HOSTNAME": "${db_hostname}",
+            "UPTIME_KUMA_DB_NAME": "${db_hostname}",
+            "UPTIME_KUMA_DB_PASSWORD": "${db_password}",
+            "UPTIME_KUMA_DB_PORT": "${db_port}",
+            "UPTIME_KUMA_DB_TYPE": "mariadb",
+            "UPTIME_KUMA_DB_USERNAME": "${db_hostname}"
+          },
+          "ports": [
+            {
+              "httpSupport": true,
+              "port": 3001
+            }
+          ],
+          "start": "sudo -E node server/server.js"
+        },
+        "setup": "app"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-uptime-kuma-main",
+  "deploymentType": "local"
+}

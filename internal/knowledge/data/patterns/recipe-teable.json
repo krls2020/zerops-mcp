@@ -1,0 +1,72 @@
+{
+  "patternId": "recipe-teable",
+  "name": "Teable",
+  "description": "Recipe Teable application",
+  "framework": "Recipe Teable",
+  "language": "Unknown",
+  "tags": [],
+  "services": [
+    {
+      "enableSubdomainAccess": true,
+      "envSecrets": {
+        "SECRET_KEY": "\u003c@generateRandomString(32)\u003e"
+      },
+      "hostname": "teable",
+      "type": "nodejs@20"
+    },
+    {
+      "hostname": "redis",
+      "mode": "NON_HA",
+      "type": "keydb@6"
+    },
+    {
+      "hostname": "db",
+      "mode": "NON_HA",
+      "type": "postgresql@16"
+    }
+  ],
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "base": "nodejs@20",
+          "buildCommands": [
+            "git clone https://github.com/teableio/teable .",
+            "pnpm i",
+            "pnpm run g:build"
+          ],
+          "deployFiles": [
+            "/"
+          ],
+          "os": "ubuntu",
+          "prepareCommands": [
+            "sudo apt-get -y update",
+            "sudo apt-get -y install libvips-dev"
+          ]
+        },
+        "run": {
+          "base": "nodejs@20",
+          "envVariables": {
+            "BACKEND_CACHE_PROVIDER": "redis",
+            "BACKEND_CACHE_REDIS_URI": "redis://redis:6379",
+            "DATABASE_URL": "${db_connectionString}/${db_dbName}",
+            "PUBLIC_ORIGIN": "${zeropsSubdomain}",
+            "REDIS_HOST": "redis",
+            "REDIS_PORT": 6379,
+            "SECRET_KEY": "${secret_key}"
+          },
+          "ports": [
+            {
+              "httpSupport": true,
+              "port": 3000
+            }
+          ],
+          "start": "pnpm start:prod"
+        },
+        "setup": "teable"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-teable-main",
+  "deploymentType": "local"
+}

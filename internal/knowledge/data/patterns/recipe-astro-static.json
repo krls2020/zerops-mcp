@@ -1,0 +1,40 @@
+{
+  "patternId": "recipe-astro-static",
+  "name": "Astro Static",
+  "description": "Astro application",
+  "framework": "Astro",
+  "language": "Unknown",
+  "tags": [
+    "astro",
+    "static"
+  ],
+  "services": [
+    {
+      "enableSubdomainAccess": true,
+      "hostname": "app",
+      "type": "static"
+    }
+  ],
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "base": "nodejs@20",
+          "buildCommands": [
+            "pnpm i",
+            "pnpm build"
+          ],
+          "deployFiles": [
+            "dist/~"
+          ]
+        },
+        "run": {
+          "base": "static"
+        },
+        "setup": "app"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-astro-static-main",
+  "deploymentType": "local"
+}

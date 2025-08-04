@@ -1,0 +1,42 @@
+{
+  "patternId": "recipe-nitro-static",
+  "name": "Nitro Static",
+  "description": "Recipe Nitro Static application",
+  "framework": "Recipe Nitro Static",
+  "language": "Unknown",
+  "tags": [
+    "static"
+  ],
+  "services": [
+    {
+      "enableSubdomainAccess": true,
+      "hostname": "app",
+      "type": "static"
+    }
+  ],
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "base": "nodejs@20",
+          "buildCommands": [
+            "pnpm i",
+            "pnpm build"
+          ],
+          "deployFiles": [
+            ".zerops/output/static/~"
+          ],
+          "envVariables": {
+            "SERVER_PRESET": "zerops-static"
+          }
+        },
+        "run": {
+          "base": "static"
+        },
+        "setup": "app"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-nitro-static-main",
+  "deploymentType": "local"
+}

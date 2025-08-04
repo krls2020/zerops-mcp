@@ -1,0 +1,49 @@
+{
+  "patternId": "recipe-svelte-nodejs",
+  "name": "Svelte Nodejs",
+  "description": "Svelte application",
+  "framework": "Svelte",
+  "language": "JavaScript",
+  "tags": [
+    "svelte",
+    "nodejs"
+  ],
+  "services": [
+    {
+      "enableSubdomainAccess": true,
+      "hostname": "app",
+      "type": "nodejs@20"
+    }
+  ],
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "base": "nodejs@20",
+          "buildCommands": [
+            "pnpm i",
+            "pnpm run build"
+          ],
+          "deployFiles": [
+            "build",
+            "package.json",
+            "node_modules"
+          ]
+        },
+        "run": {
+          "base": "nodejs@20",
+          "ports": [
+            {
+              "httpSupport": true,
+              "port": 3000
+            }
+          ],
+          "start": "pnpm start"
+        },
+        "setup": "app"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-svelte-nodejs-main",
+  "deploymentType": "local"
+}

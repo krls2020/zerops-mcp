@@ -1,0 +1,36 @@
+{
+  "patternId": "recipe-rust-hello-world",
+  "name": "Rust Hello World",
+  "description": "Hello World application",
+  "framework": "Hello World",
+  "language": "Rust",
+  "tags": [
+    "rust"
+  ],
+  "services": null,
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "base": "rust@1",
+          "buildCommands": [
+            "cargo b --release"
+          ],
+          "deploy": "target/release/~app"
+        },
+        "run": {
+          "ports": [
+            {
+              "httpSupport": true,
+              "port": 8080
+            }
+          ],
+          "start": "./app"
+        },
+        "setup": "helloworld"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-rust-hello-world-main",
+  "deploymentType": "local"
+}

@@ -1,0 +1,34 @@
+{
+  "patternId": "recipe-vue-nodejs",
+  "name": "Vue Nodejs",
+  "description": "Vue application",
+  "framework": "Vue",
+  "language": "JavaScript",
+  "tags": [
+    "vue",
+    "nodejs"
+  ],
+  "services": null,
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "base": "nodejs@20",
+          "buildCommands": [
+            "pnpm i",
+            "pnpm build"
+          ],
+          "deployFiles": [
+            "dist/~"
+          ]
+        },
+        "run": {
+          "base": "static"
+        },
+        "setup": "app"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-vue-nodejs-main",
+  "deploymentType": "local"
+}

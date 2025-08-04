@@ -1,0 +1,82 @@
+{
+  "patternId": "recipe-rails",
+  "name": "Rails",
+  "description": "Rails application",
+  "framework": "Rails",
+  "language": "Ruby",
+  "tags": [
+    "rails"
+  ],
+  "projectConfig": {
+    "envIsolation": "service"
+  },
+  "services": [
+    {
+      "hostname": "db",
+      "mode": "NON_HA",
+      "type": "postgresql@16"
+    },
+    {
+      "enableSubdomainAccess": true,
+      "hostname": "app",
+      "type": "ruby@3.4",
+      "envSecrets": {
+        "RAILS_MASTER_KEY": "<@generateRandomString(<32>)>",
+        "SECRET_KEY_BASE": "<@generateRandomString(<32>)>"
+      },
+      "verticalAutoscaling": {
+        "minRam": 0.25
+      }
+    }
+  ],
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "base": "ruby@3.4",
+          "buildCommands": [
+            "bundle install",
+            "bundle exec rails assets:precompile"
+          ],
+          "deployFiles": [
+            "."
+          ],
+          "envVariables": {
+            "BUNDLE_DEPLOYMENT": 1,
+            "BUNDLE_WITHOUT": "development",
+            "RAILS_ENV": "production"
+          },
+          "os": "alpine"
+        },
+        "run": {
+          "base": "ruby@3.4",
+          "envVariables": {
+            "BUNDLE_DEPLOYMENT": 1,
+            "BUNDLE_WITHOUT": "development",
+            "DATABASE_HOST": "${db_hostname}",
+            "DATABASE_NAME": "${db_dbName}",
+            "DATABASE_PASSWORD": "${db_password}",
+            "DATABASE_PORT": "${db_port}",
+            "DATABASE_USERNAME": "${db_user}",
+            "RAILS_ENV": "production"
+          },
+          "initCommands": [
+            "bin/rails db:migrate",
+            "zsc execOnce \"seed\" -- bin/rails db:seed"
+          ],
+          "os": "alpine",
+          "ports": [
+            {
+              "httpSupport": true,
+              "port": 3000
+            }
+          ],
+          "start": "bin/rails server"
+        },
+        "setup": "app"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-rails-main",
+  "deploymentType": "local"
+}

@@ -1,0 +1,12 @@
+{
+  "patternId": "recipe-jekyll",
+  "name": "Jekyll",
+  "description": "Recipe Jekyll application",
+  "framework": "Recipe Jekyll",
+  "language": "Unknown",
+  "tags": [],
+  "services": null,
+  "zeropsYml": null,
+  "sourceRecipe": "recipe-jekyll-main",
+  "deploymentType": "local"
+}

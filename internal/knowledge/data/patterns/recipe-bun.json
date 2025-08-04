@@ -1,0 +1,66 @@
+{
+  "patternId": "recipe-bun",
+  "name": "Bun",
+  "description": "Recipe Bun application",
+  "framework": "Recipe Bun",
+  "language": "TypeScript",
+  "tags": [
+    "bun"
+  ],
+  "services": [
+    {
+      "enableSubdomainAccess": true,
+      "hostname": "api",
+      "type": "bun@1.1"
+    },
+    {
+      "hostname": "db",
+      "mode": "NON_HA",
+      "priority": 1,
+      "type": "postgresql@16"
+    }
+  ],
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "base": "bun@1.1",
+          "buildCommands": [
+            "bun install",
+            "bun run build"
+          ],
+          "deployFiles": [
+            "package.json",
+            "dist"
+          ]
+        },
+        "run": {
+          "base": "bun@1.1",
+          "envVariables": {
+            "DB_HOST": "db",
+            "DB_NAME": "db",
+            "DB_PASS": "${db_password}",
+            "DB_USER": "db",
+            "NODE_ENV": "production"
+          },
+          "healthCheck": {
+            "httpGet": {
+              "path": "/status",
+              "port": 3000
+            }
+          },
+          "ports": [
+            {
+              "httpSupport": true,
+              "port": 3000
+            }
+          ],
+          "start": "bun run start:prod"
+        },
+        "setup": "api"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-bun-main",
+  "deploymentType": "local"
+}

@@ -1,0 +1,68 @@
+{
+  "patternId": "recipe-minecraft-server",
+  "name": "Minecraft Server",
+  "description": "Minecraft Server service for Zerops",
+  "framework": "Recipe Minecraft Server",
+  "language": "Unknown",
+  "tags": [],
+  "services": [
+    {
+      "buildFromGit": "https://github.com/zeropsio/recipe-minecraft-server",
+      "envSecrets": {
+        "MC_SEED": "zerops_rules",
+        "MC_WORLD_NAME": "world"
+      },
+      "hostname": "server",
+      "maxContainers": 1,
+      "mount": [
+        "disk"
+      ],
+      "priority": 5,
+      "type": "java@21",
+      "verticalAutoscaling": {
+        "minRam": 2
+      }
+    },
+    {
+      "hostname": "disk",
+      "mode": "HA",
+      "priority": 10,
+      "type": "shared-storage"
+    }
+  ],
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "buildCommands": [
+            "wget https://piston-data.mojang.com/v1/objects/450698d1863ab5180c25d7c804ef0fe6369dd1ba/server.jar"
+          ],
+          "deployFiles": [
+            "server.jar",
+            "server.properties",
+            "eula.txt"
+          ]
+        },
+        "run": {
+          "envReplace": {
+            "delimiter": "$$",
+            "target": [
+              "server.properties"
+            ]
+          },
+          "ports": [
+            {
+              "httpSupport": false,
+              "port": 25565,
+              "protocol": "tcp"
+            }
+          ],
+          "start": "sudo java -Xms1G -Xmx8G -jar server.jar --nogui"
+        },
+        "setup": "server"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-minecraft-server-main",
+  "deploymentType": "git"
+}

@@ -1,0 +1,17 @@
+{
+  "runtime": "java",
+  "displayName": "Java",
+  "versions": {
+    "available": ["21", "17", "11", "8"],
+    "default": "21"
+  },
+  "buildConfig": {
+    "buildCommands": ["mvn clean package"],
+    "deployFiles": ["target/*.jar"],
+    "addToRunPrepare": ["pom.xml"]
+  },
+  "runConfig": {
+    "startCommand": "java -jar app.jar",
+    "port": 8080
+  }
+}

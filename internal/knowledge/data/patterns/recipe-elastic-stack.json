@@ -1,0 +1,187 @@
+{
+  "patternId": "recipe-elastic-stack",
+  "name": "Elastic Stack",
+  "description": "Recipe Elastic Stack application",
+  "framework": "Recipe Elastic Stack",
+  "language": "Unknown",
+  "tags": [],
+  "services": [
+    {
+      "hostname": "elasticsearch",
+      "mode": "NON_HA",
+      "priority": 10,
+      "type": "elasticsearch@8.16"
+    },
+    {
+      "enableSubdomainAccess": true,
+      "envSecrets": {
+        "ELASTICSEARCH_URL": "http://elasticsearch:9200",
+        "PUBLIC_BASE_URL": "$zeropsSubdomain"
+      },
+      "hostname": "kibana",
+      "maxContainers": 1,
+      "minContainers": 1,
+      "type": "ubuntu@24.04",
+      "verticalAutoscaling": {
+        "minRam": 1
+      }
+    },
+    {
+      "envSecrets": {
+        "ELASTICSEARCH_URL": "http://elasticsearch:9200"
+      },
+      "hostname": "logstash",
+      "maxContainers": 1,
+      "minContainers": 1,
+      "type": "ubuntu@24.04",
+      "verticalAutoscaling": {
+        "minRam": 1
+      }
+    },
+    {
+      "envSecrets": {
+        "ELASTICSEARCH_URL": "http://elasticsearch:9200"
+      },
+      "hostname": "apmserver",
+      "maxContainers": 1,
+      "minContainers": 1,
+      "type": "ubuntu@24.04"
+    }
+  ],
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "deployFiles": [
+            "kibana/kibana.yml"
+          ]
+        },
+        "deploy": {
+          "readinessCheck": {
+            "httpGet": {
+              "path": "/",
+              "port": 5601
+            }
+          }
+        },
+        "run": {
+          "base": "ubuntu@24.04",
+          "envReplace": {
+            "delimiter": "%%",
+            "target": [
+              "kibana/kibana.yml"
+            ]
+          },
+          "initCommands": [
+            "sudo cp -f kibana/kibana.yml /etc/kibana/kibana.yml",
+            "sudo chown -R kibana /etc/kibana",
+            "sudo systemctl start kibana"
+          ],
+          "os": "ubuntu",
+          "ports": [
+            {
+              "httpSupport": true,
+              "port": 5601
+            }
+          ],
+          "prepareCommands": [
+            "wget -qO - https://artifacts.elastic.co/GPG-KEY-elasticsearch | sudo gpg --dearmor -o /usr/share/keyrings/elasticsearch-keyring.gpg",
+            "echo \"deb [signed-by=/usr/share/keyrings/elasticsearch-keyring.gpg] https://artifacts.elastic.co/packages/8.x/apt stable main\" | sudo tee /etc/apt/sources.list.d/elastic-8.x.list",
+            "sudo apt-get update \u0026\u0026 sudo apt-get install kibana=8.16.6",
+            "sudo apt-get autoremove \u0026\u0026 sudo apt-get clean"
+          ],
+          "start": "zsc noop --silent"
+        },
+        "setup": "kibana"
+      },
+      {
+        "build": {
+          "deployFiles": [
+            "logstash/logstash.yml",
+            "logstash/zerops-syslog.conf"
+          ]
+        },
+        "run": {
+          "base": "ubuntu@24.04",
+          "envReplace": {
+            "delimiter": "%%",
+            "target": [
+              "logstash/zerops-syslog.conf"
+            ]
+          },
+          "initCommands": [
+            "sudo cp -f logstash/zerops-syslog.conf /etc/logstash/conf.d/zerops-syslog.conf",
+            "sudo cp -f logstash/logstash.yml /etc/logstash/logstash.yml",
+            "sudo chown -R logstash /etc/logstash",
+            "sudo systemctl start logstash"
+          ],
+          "os": "ubuntu",
+          "ports": [
+            {
+              "port": 1514,
+              "protocol": "udp"
+            },
+            {
+              "port": 1514,
+              "protocol": "tcp"
+            }
+          ],
+          "prepareCommands": [
+            "wget -qO - https://artifacts.elastic.co/GPG-KEY-elasticsearch | sudo gpg --dearmor -o /usr/share/keyrings/elasticsearch-keyring.gpg",
+            "echo \"deb [signed-by=/usr/share/keyrings/elasticsearch-keyring.gpg] https://artifacts.elastic.co/packages/8.x/apt stable main\" | sudo tee /etc/apt/sources.list.d/elastic-8.x.list",
+            "sudo apt-get update \u0026\u0026 sudo apt-get install logstash",
+            "sudo apt-get autoremove \u0026\u0026 sudo apt-get clean"
+          ],
+          "start": "zsc noop --silent"
+        },
+        "setup": "logstash"
+      },
+      {
+        "build": {
+          "deployFiles": [
+            "apm-server/apm-server.yml"
+          ]
+        },
+        "deploy": {
+          "readinessCheck": {
+            "httpGet": {
+              "path": "/",
+              "port": 8200
+            }
+          }
+        },
+        "run": {
+          "base": "ubuntu@24.04",
+          "envReplace": {
+            "delimiter": "%%",
+            "target": [
+              "apm-server/apm-server.yml"
+            ]
+          },
+          "initCommands": [
+            "sudo cp -f apm-server/apm-server.yml /etc/apm-server/apm-server.yml",
+            "sudo chown -R apm-server /etc/apm-server",
+            "sudo systemctl start apm-server"
+          ],
+          "os": "ubuntu",
+          "ports": [
+            {
+              "httpSupport": true,
+              "port": 8200
+            }
+          ],
+          "prepareCommands": [
+            "wget -qO - https://artifacts.elastic.co/GPG-KEY-elasticsearch | sudo gpg --dearmor -o /usr/share/keyrings/elasticsearch-keyring.gpg",
+            "echo \"deb [signed-by=/usr/share/keyrings/elasticsearch-keyring.gpg] https://artifacts.elastic.co/packages/8.x/apt stable main\" | sudo tee /etc/apt/sources.list.d/elastic-8.x.list",
+            "sudo apt-get update \u0026\u0026 sudo apt-get install apm-server",
+            "sudo apt-get autoremove \u0026\u0026 sudo apt-get clean"
+          ],
+          "start": "zsc noop --silent"
+        },
+        "setup": "apmserver"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-elastic-stack-main",
+  "deploymentType": "local"
+}

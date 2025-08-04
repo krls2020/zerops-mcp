@@ -1,0 +1,140 @@
+{
+  "patternId": "recipe-filament",
+  "name": "Filament",
+  "description": "Filament service for Zerops",
+  "framework": "Recipe Filament",
+  "language": "Unknown",
+  "tags": [],
+  "services": [
+    {
+      "buildFromGit": "https://github.com/zeropsio/recipe-filament",
+      "enableSubdomainAccess": true,
+      "envSecrets": {
+        "APP_DEBUG": false,
+        "APP_ENV": "production",
+        "APP_KEY": "\u003c@generateRandomString(\u003c32\u003e)\u003e"
+      },
+      "hostname": "app",
+      "minContainers": 2,
+      "type": "php-nginx@8.3",
+      "verticalAutoscaling": {
+        "minFreeRamGB": 0.125,
+        "minRam": 0.25
+      }
+    },
+    {
+      "hostname": "db",
+      "mode": "HA",
+      "priority": 10,
+      "type": "postgresql@16"
+    },
+    {
+      "hostname": "redis",
+      "mode": "HA",
+      "priority": 10,
+      "type": "valkey@7.2"
+    },
+    {
+      "hostname": "storage",
+      "objectStoragePolicy": "public-read",
+      "objectStorageSize": 2,
+      "priority": 10,
+      "type": "object-storage"
+    }
+  ],
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "base": [
+            "php@8.3"
+          ],
+          "buildCommands": [
+            "composer install --ignore-platform-reqs"
+          ],
+          "cache": [
+            "vendor",
+            "composer.lock"
+          ],
+          "deployFiles": "./",
+          "os": "alpine"
+        },
+        "deploy": {
+          "readinessCheck": {
+            "httpGet": {
+              "path": "/up",
+              "port": 80
+            }
+          }
+        },
+        "run": {
+          "base": "php-nginx@8.3",
+          "envVariables": {
+            "APP_FAKER_LOCALE": "en_US",
+            "APP_FALLBACK_LOCALE": "en",
+            "APP_LOCALE": "en",
+            "APP_MAINTENANCE_DRIVER": "file",
+            "APP_MAINTENANCE_STORE": "database",
+            "APP_NAME": "Filament X Zerops",
+            "APP_TIMEZONE": "UTC",
+            "APP_URL": "${zeropsSubdomain}",
+            "AWS_ACCESS_KEY_ID": "${storage_accessKeyId}",
+            "AWS_BUCKET": "${storage_bucketName}",
+            "AWS_ENDPOINT": "${storage_apiUrl}",
+            "AWS_REGION": "us-east-1",
+            "AWS_SECRET_ACCESS_KEY": "${storage_secretAccessKey}",
+            "AWS_URL": "${storage_apiUrl}/${storage_bucketName}",
+            "AWS_USE_PATH_STYLE_ENDPOINT": true,
+            "BCRYPT_ROUNDS": 12,
+            "BROADCAST_CONNECTION": "redis",
+            "CACHE_PREFIX": "cache",
+            "CACHE_STORE": "redis",
+            "DB_CONNECTION": "pgsql",
+            "DB_DATABASE": "db",
+            "DB_HOST": "db",
+            "DB_PASSWORD": "${db_password}",
+            "DB_PORT": 5432,
+            "DB_USERNAME": "${db_user}",
+            "FILAMENT_FILESYSTEM_DISK": "s3",
+            "FILESYSTEM_DISK": "s3",
+            "LOG_CHANNEL": "syslog",
+            "LOG_LEVEL": "debug",
+            "LOG_STACK": "single",
+            "MAIL_FROM_ADDRESS": "hello@example.com",
+            "MAIL_FROM_NAME": "FilamentZerops",
+            "MAIL_HOST": "mailpit",
+            "MAIL_MAILER": "smtp",
+            "MAIL_PORT": 1025,
+            "QUEUE_CONNECTION": "redis",
+            "REDIS_CLIENT": "phpredis",
+            "REDIS_HOST": "redis",
+            "REDIS_PORT": 6379,
+            "SESSION_DRIVER": "redis",
+            "SESSION_ENCRYPT": false,
+            "SESSION_LIFETIME": 120,
+            "SESSION_PATH": "/"
+          },
+          "healthCheck": {
+            "httpGet": {
+              "path": "/up",
+              "port": 80
+            }
+          },
+          "initCommands": [
+            "php artisan view:cache",
+            "php artisan config:cache",
+            "php artisan route:cache",
+            "sudo -E -u zerops -- zsc execOnce ${appVersionId} -- php artisan migrate --isolated --force",
+            "sudo -E -u zerops -- zsc execOnce initialize -- php artisan db:seed --force",
+            "php artisan optimize"
+          ],
+          "os": "alpine",
+          "siteConfigPath": "site.conf.tmpl"
+        },
+        "setup": "app"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-filament-main",
+  "deploymentType": "git"
+}

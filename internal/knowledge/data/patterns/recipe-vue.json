@@ -1,0 +1,43 @@
+{
+  "patternId": "recipe-vue",
+  "name": "Vue",
+  "description": "Vue application",
+  "framework": "Vue",
+  "language": "JavaScript",
+  "tags": [
+    "vue"
+  ],
+  "services": [
+    {
+      "enableSubdomainAccess": true,
+      "hostname": "app",
+      "type": "static@1.0"
+    }
+  ],
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "base": "nodejs@20",
+          "buildCommands": [
+            "pnpm i",
+            "pnpm build"
+          ],
+          "cache": [
+            "node_modules",
+            "pnpm-lock.yaml"
+          ],
+          "deployFiles": [
+            "dist/~"
+          ]
+        },
+        "run": {
+          "base": "static"
+        },
+        "setup": "app"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-vue-main",
+  "deploymentType": "local"
+}

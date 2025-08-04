@@ -1,0 +1,39 @@
+{
+  "patternId": "recipe-fresh-deno",
+  "name": "Fresh Deno",
+  "description": "Recipe Fresh Deno application",
+  "framework": "Recipe Fresh Deno",
+  "language": "TypeScript",
+  "tags": [
+    "deno"
+  ],
+  "services": null,
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "base": "deno@1",
+          "buildCommands": [
+            "deno task build"
+          ],
+          "deployFiles": [
+            "/"
+          ]
+        },
+        "run": {
+          "base": "deno@1",
+          "ports": [
+            {
+              "httpSupport": true,
+              "port": 8000
+            }
+          ],
+          "start": "deno task start"
+        },
+        "setup": "app"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-fresh-deno-main",
+  "deploymentType": "local"
+}

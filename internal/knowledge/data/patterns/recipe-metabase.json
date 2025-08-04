@@ -1,0 +1,42 @@
+{
+  "patternId": "recipe-metabase",
+  "name": "Metabase",
+  "description": "Metabase service for Zerops",
+  "framework": "Recipe Metabase",
+  "language": "Unknown",
+  "tags": [],
+  "services": null,
+  "zeropsYml": {
+    "zerops": [
+      {
+        "run": {
+          "base": "java@21",
+          "envVariables": {
+            "JAVA_OPTS": "-Xmx3584m -Xms2048m",
+            "MB_DB_HOST": "${db_hostname}",
+            "MB_DB_NAME": "${db_dbName}",
+            "MB_DB_PASS": "${db_password}",
+            "MB_DB_PORT": "${db_port}",
+            "MB_DB_TYPE": "postgres",
+            "MB_DB_USER": "${db_user}",
+            "METABASE_VERSION": "0.53.1"
+          },
+          "os": "ubuntu",
+          "ports": [
+            {
+              "httpSupport": true,
+              "port": 3000
+            }
+          ],
+          "prepareCommands": [
+            "curl -L \"https://downloads.metabase.com/v${METABASE_VERSION}/metabase.jar\" -o /var/www/metabase.jar\nchown zerops:zerops /var/www/metabase.jar\nchmod 644 /var/www/metabase.jar\n"
+          ],
+          "start": "java ${JAVA_OPTS} --add-opens java.base/java.nio=ALL-UNNAMED -jar /var/www/metabase.jar"
+        },
+        "setup": "metabase"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-metabase-main",
+  "deploymentType": "git"
+}

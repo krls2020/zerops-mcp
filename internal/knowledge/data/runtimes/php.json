@@ -1,0 +1,25 @@
+{
+  "runtime": "php",
+  "displayName": "PHP",
+  "versions": {
+    "available": ["8.4", "8.3", "8.1"],
+    "default": "8.4"
+  },
+  "buildConfig": {
+    "buildCommands": ["composer install --optimize-autoloader --no-dev"],
+    "deployFiles": ["vendor", "public", "app", "config", "resources", "routes"],
+    "addToRunPrepare": ["composer.json", "composer.lock"]
+  },
+  "runConfig": {
+    "variants": {
+      "apache": {
+        "base": "php-apache",
+        "documentRoot": "public"
+      },
+      "nginx": {
+        "base": "php-nginx",
+        "documentRoot": "public"
+      }
+    }
+  }
+}

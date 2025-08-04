@@ -1,0 +1,109 @@
+{
+  "patternId": "flask-simple",
+  "name": "Flask Simple",
+  "description": "Simple Flask web application with PostgreSQL database",
+  "framework": "Flask",
+  "language": "Python",
+  "tags": ["python", "flask", "web", "api"],
+  "services": [
+    {
+      "hostname": "app",
+      "type": "python@3.12",
+      "mode": "HA",
+      "minContainers": 1,
+      "maxContainers": 3,
+      "ports": [
+        {
+          "port": 8000,
+          "httpSupport": true
+        }
+      ],
+      "envVariables": {
+        "FLASK_APP": "app.py",
+        "FLASK_ENV": "production",
+        "DB_HOST": "${db_hostname}",
+        "DB_PORT": "${db_port}",
+        "DB_NAME": "${db_dbName}",
+        "DB_USER": "${db_user}",
+        "DB_PASS": "${db_password}"
+      }
+    },
+    {
+      "hostname": "db",
+      "type": "postgresql@16",
+      "mode": "HA"
+    }
+  ],
+  "zeropsYml": {
+    "zerops": [
+      {
+        "setup": "app",
+        "build": {
+          "base": "python@3.12",
+          "buildCommands": [
+            "python3 -m pip install --upgrade pip",
+            "python3 -m pip install -r requirements.txt"
+          ],
+          "deploy": [
+            "app.py",
+            "requirements.txt"
+          ],
+          "addToRunPrepare": [
+            "requirements.txt"
+          ]
+        },
+        "run": {
+          "base": "python@3.12",
+          "prepareCommands": [
+            "python3 -m pip install --ignore-installed -r requirements.txt"
+          ],
+          "start": "python3 app.py",
+          "ports": [
+            {
+              "port": 8000,
+              "httpSupport": true
+            }
+          ],
+          "envVariables": {
+            "DB_NAME": "${db_dbName}",
+            "DB_HOST": "${db_hostname}",
+            "DB_PORT": "${db_port}",
+            "DB_USER": "${db_user}",
+            "DB_PASS": "${db_password}"
+          }
+        }
+      }
+    ]
+  },
+  "setupInstructions": [
+    "Create app.py with Flask application",
+    "Create requirements.txt with dependencies",
+    "Configure database connection using environment variables",
+    "Ensure app runs on port 8000"
+  ],
+  "commonIssues": [
+    {
+      "issue": "ModuleNotFoundError: No module named 'flask'",
+      "solution": "Ensure requirements.txt includes flask and prepareCommands runs pip install"
+    },
+    {
+      "issue": "Connection refused on port",
+      "solution": "Bind Flask to 0.0.0.0:8000 not localhost/127.0.0.1"
+    },
+    {
+      "issue": "Database connection fails",
+      "solution": "Use environment variables for database configuration"
+    }
+  ],
+  "bestPractices": [
+    "Use environment variables for configuration",
+    "Set FLASK_ENV to production",
+    "Use python3 explicitly in commands",
+    "Include all dependencies in requirements.txt",
+    "Bind to 0.0.0.0 for container networking"
+  ],
+  "exampleCode": {
+    "app.py": "from flask import Flask, jsonify\nimport os\n\napp = Flask(__name__)\n\n@app.route('/')\ndef hello():\n    return jsonify({'message': 'Hello from Zerops!'})\n\n@app.route('/status')\ndef status():\n    return jsonify({'status': 'healthy'})\n\nif __name__ == '__main__':\n    app.run(host='0.0.0.0', port=8000)",
+    "requirements.txt": "flask==3.0.0\npsycopg2-binary==2.9.9\npython-dotenv==1.0.0"
+  }
+}

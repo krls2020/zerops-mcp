@@ -1,0 +1,40 @@
+{
+  "patternId": "recipe-angular-static",
+  "name": "Angular Static",
+  "description": "Angular application",
+  "framework": "Angular",
+  "language": "TypeScript",
+  "tags": [
+    "angular",
+    "static"
+  ],
+  "services": [
+    {
+      "enableSubdomainAccess": true,
+      "hostname": "app",
+      "type": "static"
+    }
+  ],
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "base": "nodejs@20",
+          "buildCommands": [
+            "npm i",
+            "npm run build"
+          ],
+          "deployFiles": [
+            "dist/recipe-angular-static/browser/~"
+          ]
+        },
+        "run": {
+          "base": "static"
+        },
+        "setup": "app"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-angular-static-main",
+  "deploymentType": "local"
+}

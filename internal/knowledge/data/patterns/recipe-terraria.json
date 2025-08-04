@@ -1,0 +1,47 @@
+{
+  "patternId": "recipe-terraria",
+  "name": "Terraria",
+  "description": "Recipe Terraria application",
+  "framework": "Recipe Terraria",
+  "language": "Unknown",
+  "tags": [],
+  "services": null,
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "base": "ubuntu@22.04",
+          "buildCommands": [
+            "sudo apt update",
+            "sudo apt install mono-complete -y",
+            "sudo apt install unzip -y",
+            "sudo apt install libc6-dev -y",
+            "sudo apt install wget tar screen -y",
+            "sudo wget https://terraria.org/api/download/pc-dedicated-server/terraria-server-1423.zip",
+            "sudo unzip terraria-server-1423.zip \u0026\u0026 cd 1423 \u0026\u0026 cd Linux \u0026\u0026 chmod +x TerrariaServer.bin.x86*"
+          ],
+          "deployFiles": [
+            "/"
+          ],
+          "prepareCommands": [
+            "sudo apt update \u0026\u0026 sudo apt install -y wget tmux unzip",
+            "wget https://terraria.org/api/download/pc-dedicated-server/terraria-server-1423.zip",
+            "unzip terraria-server*"
+          ]
+        },
+        "run": {
+          "base": "ubuntu@22.04",
+          "ports": [
+            {
+              "port": 7777
+            }
+          ],
+          "start": "ls -l"
+        },
+        "setup": "terraria"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-terraria-main",
+  "deploymentType": "local"
+}

@@ -1,0 +1,140 @@
+{
+  "patternId": "recipe-medusa",
+  "name": "Medusa",
+  "description": "Medusa service for Zerops",
+  "framework": "Recipe Medusa",
+  "language": "Unknown",
+  "tags": [],
+  "services": [
+    {
+      "hostname": "db",
+      "mode": "NON_HA",
+      "priority": 100,
+      "type": "postgresql@16"
+    },
+    {
+      "enableSubdomainAccess": true,
+      "hostname": "search",
+      "mode": "NON_HA",
+      "priority": 100,
+      "type": "meilisearch@1.10"
+    },
+    {
+      "hostname": "redis",
+      "mode": "NON_HA",
+      "priority": 100,
+      "type": "valkey@7.2"
+    },
+    {
+      "hostname": "storage",
+      "objectStoragePolicy": "public-read",
+      "objectStorageSize": 2,
+      "priority": 100,
+      "type": "object-storage"
+    },
+    {
+      "buildFromGit": "https://github.com/zeropsio/recipe-medusa",
+      "enableSubdomainAccess": true,
+      "envSecrets": {
+        "ADMIN_CORS": "${zeropsSubdomain}",
+        "COOKIE_SECRET": "\u003c@generateRandomString(\u003c32\u003e)\u003e",
+        "JWT_SECRET": "\u003c@generateRandomString(\u003c32\u003e)\u003e",
+        "SUPERADMIN_EMAIL": "admin@example.com",
+        "SUPERADMIN_PASSWORD": "s4lt_\u003c@generateRandomString(\u003c16\u003e)\u003e"
+      },
+      "hostname": "medusa",
+      "priority": 90,
+      "type": "nodejs@22",
+      "verticalAutoscaling": {
+        "cpu": 1,
+        "minRam": 0.5
+      }
+    },
+    {
+      "buildFromGit": "https://github.com/zeropsio/recipe-medusa-nextstore",
+      "enableSubdomainAccess": true,
+      "envSecrets": {
+        "REVALIDATE_SECRET": "\u003c@generateRandomString(\u003c16\u003e)\u003e"
+      },
+      "hostname": "nextstore",
+      "type": "nodejs@22",
+      "verticalAutoscaling": {
+        "minRam": 0.5
+      }
+    }
+  ],
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "base": "nodejs@22",
+          "buildCommands": [
+            "yarn",
+            "yarn build"
+          ],
+          "cache": "node_modules",
+          "deployFiles": [
+            ".medusa/server/~",
+            "tsconfig.json",
+            "node_modules",
+            "./src/scripts/seed-files"
+          ],
+          "envVariables": {
+            "BACKEND_URL": "${MEDUSA_INSTANCE_URL}"
+          }
+        },
+        "deploy": {
+          "readinessCheck": {
+            "httpGet": {
+              "path": "/health",
+              "port": 9000
+            }
+          }
+        },
+        "run": {
+          "base": "nodejs@22",
+          "envVariables": {
+            "BACKEND_URL": "${MEDUSA_INSTANCE_URL}",
+            "CACHE_REDIS_URL": "redis://${redis_hostname}:6379",
+            "DATABASE_TYPE": "postgres",
+            "DATABASE_URL": "postgresql://${db_user}:${db_password}@${db_hostname}:5432/${db_hostname}?ssl_mode=disable",
+            "EVENTS_REDIS_URL": "redis://${redis_hostname}:6379",
+            "MEILISEARCH_API_KEY": "${search_masterKey}",
+            "MEILISEARCH_HOST": "http://${search_hostname}:${search_port}",
+            "MINIO_ACCESS_KEY": "${storage_accessKeyId}",
+            "MINIO_BUCKET": "${storage_bucketName}",
+            "MINIO_ENDPOINT": "${storage_apiUrl}",
+            "MINIO_SECRET_KEY": "${storage_secretAccessKey}",
+            "NODE_ENV": "production",
+            "REDIS_URL": "redis://${redis_hostname}:6379",
+            "STORE_CORS": "${NEXT_STORE_URL},${ANALOG_STORE_URL},http://localhost:5173,http://localhost:3000"
+          },
+          "healthCheck": {
+            "httpGet": {
+              "path": "/health",
+              "port": 9000
+            }
+          },
+          "initCommands": [
+            "zsc execOnce ${appVersionId}_migration -- yarn migrate",
+            "zsc execOnce ${appVersionId}_links -- yarn syncLinks",
+            "zsc execOnce createInitialSuperadmin -- yarn createInitialSuperadmin",
+            "zsc execOnce seedInitialData -- yarn seedInitialData",
+            "zsc execOnce setInitialPublishableKey -- yarn setInitialPublishableKey",
+            "zsc execOnce addInitialSearchDocuments -- yarn addInitialSearchDocuments"
+          ],
+          "ports": [
+            {
+              "httpSupport": true,
+              "port": 9000
+            }
+          ],
+          "start": "yarn start"
+        },
+        "setup": "medusa"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-medusa-main",
+  "deploymentType": "git"
+}

@@ -1,0 +1,38 @@
+{
+  "patternId": "recipe-dotnet-hello-world",
+  "name": "Dotnet Hello World",
+  "description": "Hello World application",
+  "framework": "Hello World",
+  "language": "C#",
+  "tags": [
+    "dotnet"
+  ],
+  "services": null,
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "base": "dotnet@6",
+          "buildCommands": [
+            "cd dotnet\ndotnet publish -c Release -o app\n"
+          ],
+          "deploy": [
+            "./dotnet/app/~"
+          ]
+        },
+        "run": {
+          "ports": [
+            {
+              "httpSupport": true,
+              "port": 8080
+            }
+          ],
+          "start": "dotnet ./dotnet.dll"
+        },
+        "setup": "helloworld"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-dotnet-hello-world-main",
+  "deploymentType": "local"
+}

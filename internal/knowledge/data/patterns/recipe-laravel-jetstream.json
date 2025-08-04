@@ -1,0 +1,164 @@
+{
+  "patternId": "recipe-laravel-jetstream",
+  "name": "Laravel Jetstream",
+  "description": "Laravel application",
+  "framework": "Laravel",
+  "language": "PHP",
+  "tags": [
+    "laravel",
+    "full-stack"
+  ],
+  "services": [
+    {
+      "enableSubdomainAccess": true,
+      "envSecrets": {
+        "APP_KEY": "<@generateRandomString(<32>)>"
+      },
+      "hostname": "app",
+      "minContainers": 2,
+      "type": "php-nginx@8.4",
+      "verticalAutoscaling": {
+        "minFreeRamGB": 0.125,
+        "minRam": 0.25
+      }
+    },
+    {
+      "hostname": "db",
+      "mode": "NON_HA",
+      "priority": 10,
+      "type": "postgresql@16"
+    },
+    {
+      "hostname": "redis",
+      "mode": "HA",
+      "priority": 10,
+      "type": "valkey@7.2"
+    },
+    {
+      "hostname": "storage",
+      "objectStoragePolicy": "public-read",
+      "objectStorageSize": 2,
+      "priority": 10,
+      "type": "object-storage"
+    }
+  ],
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "base": [
+            "php@8.4",
+            "nodejs@18"
+          ],
+          "buildCommands": [
+            "composer install --optimize-autoloader --no-dev",
+            "npm install",
+            "npm run build"
+          ],
+          "cache": [
+            "vendor",
+            "composer.lock",
+            "node_modules",
+            "package-lock.json"
+          ],
+          "deployFiles": "./",
+          "os": "ubuntu"
+        },
+        "deploy": {
+          "readinessCheck": {
+            "httpGet": {
+              "path": "/up",
+              "port": 80
+            }
+          }
+        },
+        "run": {
+          "base": "php-nginx@8.4",
+          "envVariables": {
+            "APP_DEBUG": false,
+            "APP_ENV": "production",
+            "APP_NAME": "ZeropsLaravelJetstreamProd",
+            "APP_FAKER_LOCALE": "en_US",
+            "APP_FALLBACK_LOCALE": "en",
+            "APP_LOCALE": "en",
+            "APP_MAINTENANCE_DRIVER": "file",
+            "APP_MAINTENANCE_STORE": "database",
+            "APP_TIMEZONE": "UTC",
+            "APP_URL": "${zeropsSubdomain}",
+            "ASSET_URL": "${APP_URL}",
+            "AWS_ACCESS_KEY_ID": "${storage_accessKeyId}",
+            "AWS_BUCKET": "${storage_bucketName}",
+            "AWS_ENDPOINT": "${storage_apiUrl}",
+            "AWS_REGION": "us-east-1",
+            "AWS_SECRET_ACCESS_KEY": "${storage_secretAccessKey}",
+            "AWS_URL": "${storage_apiUrl}/${storage_bucketName}",
+            "AWS_USE_PATH_STYLE_ENDPOINT": true,
+            "BCRYPT_ROUNDS": 12,
+            "BROADCAST_CONNECTION": "redis",
+            "CACHE_PREFIX": "cache",
+            "CACHE_STORE": "redis",
+            "DB_CONNECTION": "pgsql",
+            "DB_DATABASE": "db",
+            "DB_HOST": "db",
+            "DB_PASSWORD": "${db_password}",
+            "DB_PORT": 5432,
+            "DB_USERNAME": "${db_user}",
+            "FILESYSTEM_DISK": "s3",
+            "LOG_CHANNEL": "syslog",
+            "LOG_LEVEL": "debug",
+            "LOG_STACK": "single",
+            "MAIL_FROM_ADDRESS": "hello@example.com",
+            "MAIL_FROM_NAME": "ZeropsLaravel",
+            "MAIL_HOST": "mailpit",
+            "MAIL_MAILER": "smtp",
+            "MAIL_PORT": 1025,
+            "QUEUE_CONNECTION": "redis",
+            "REDIS_CLIENT": "phpredis",
+            "REDIS_HOST": "redis",
+            "REDIS_PORT": 6379,
+            "SESSION_DRIVER": "redis",
+            "SESSION_ENCRYPT": false,
+            "SESSION_LIFETIME": 120,
+            "SESSION_PATH": "/",
+            "TRUSTED_PROXIES": "*",
+            "VITE_APP_NAME": "${APP_NAME}"
+          },
+          "healthCheck": {
+            "httpGet": {
+              "path": "/up",
+              "port": 80
+            }
+          },
+          "initCommands": [
+            "php artisan view:cache",
+            "php artisan config:cache",
+            "php artisan route:cache",
+            "php artisan migrate --isolated --force",
+            "php artisan optimize"
+          ],
+          "os": "ubuntu",
+          "siteConfigPath": "site.conf.tmpl"
+        },
+        "setup": "app"
+      }
+    ]
+  },
+  "commonIssues": [
+    {
+      "issue": "Migration fails",
+      "solution": "Add --isolated flag to migration command"
+    },
+    {
+      "issue": "Storage not writable",
+      "solution": "Storage directory is automatically writable in Zerops"
+    }
+  ],
+  "bestPractices": [
+    "Use php-apache@8.3 for Laravel",
+    "Cache all configurations in build",
+    "Use Valkey for sessions and cache",
+    "Enable OPcache for production"
+  ],
+  "sourceRecipe": "recipe-laravel-jetstream-main",
+  "deploymentType": "local"
+}

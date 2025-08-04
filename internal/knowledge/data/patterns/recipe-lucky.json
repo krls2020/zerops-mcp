@@ -1,0 +1,78 @@
+{
+  "patternId": "recipe-lucky",
+  "name": "Lucky",
+  "description": "Recipe Lucky application",
+  "framework": "Recipe Lucky",
+  "language": "Unknown",
+  "tags": [],
+  "services": null,
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "base": "ubuntu@22.04",
+          "buildCommands": [
+            "shards install --without-development",
+            "shards build --production"
+          ],
+          "deployFiles": [
+            "/"
+          ],
+          "prepareCommands": [
+            "sudo apt update",
+            "sudo apt-get update",
+            "curl -fsSL https://crystal-lang.org/install.sh | sudo bash",
+            "sudo apt install crystal",
+            "sudo apt install git -y",
+            "sudo apt install nodejs -y",
+            "curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -",
+            "echo \"deb https://dl.yarnpkg.com/debian/ stable main\" | sudo tee /etc/apt/sources.list.d/yarn.list",
+            "sudo apt-get install -y libc6-dev libevent-dev libpcre2-dev libpcre3-dev libpng-dev libssl-dev libyaml-dev zlib1g-dev",
+            "wget https://github.com/luckyframework/lucky_cli/releases/download/v1.2.0/lucky-v1.2.0-linux-amd64.tar.gz",
+            "tar -xzf lucky-v1.2.0-linux-amd64.tar.gz",
+            "sudo apt update \u0026\u0026 sudo apt install yarn -y",
+            "sudo mv lucky /usr/local/bin/lucky",
+            "sudo apt-get install postgresql-client -y",
+            "sudo apt-get install libevent-dev -y"
+          ]
+        },
+        "run": {
+          "base": "ubuntu@22.04",
+          "envVariables": {
+            "BUILD_WITHOUT_DEVELOPMENT": true,
+            "DATABASE_URL": "postgresql://luckydb:${password}@${hostname}:5432"
+          },
+          "initCommands": [
+            "script/system_check \u0026\u0026 sleep 10",
+            "shards install --without-development"
+          ],
+          "os": "ubuntu",
+          "ports": [
+            {
+              "httpSupport": true,
+              "port": 3000
+            }
+          ],
+          "prepareCommands": [
+            "sudo apt update",
+            "sudo apt-get update",
+            "curl -fsSL https://crystal-lang.org/install.sh | sudo bash",
+            "sudo apt install crystal",
+            "sudo apt install git -y",
+            "sudo apt install nodejs -y",
+            "wget https://github.com/luckyframework/lucky_cli/releases/download/v1.2.0/lucky-v1.2.0-linux-amd64.tar.gz",
+            "tar -xzf lucky-v1.2.0-linux-amd64.tar.gz",
+            "sudo apt update \u0026\u0026 sudo apt install yarn -y",
+            "sudo mv lucky /usr/local/bin/lucky",
+            "sudo apt-get install postgresql-client -y",
+            "sudo apt-get install libevent-dev -y"
+          ],
+          "start": "lucky watch \u0026\u0026 lucky prod"
+        },
+        "setup": "lucky"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-lucky-main",
+  "deploymentType": "local"
+}

@@ -1,0 +1,39 @@
+{
+  "patternId": "recipe-analog-static",
+  "name": "Analog Static",
+  "description": "Recipe Analog Static application",
+  "framework": "Recipe Analog Static",
+  "language": "Unknown",
+  "tags": [
+    "static"
+  ],
+  "services": [
+    {
+      "enableSubdomainAccess": true,
+      "hostname": "app",
+      "type": "static"
+    }
+  ],
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "base": "nodejs@20",
+          "buildCommands": [
+            "pnpm i",
+            "pnpm build"
+          ],
+          "deployFiles": [
+            "dist/analog/public/~"
+          ]
+        },
+        "run": {
+          "base": "static"
+        },
+        "setup": "app"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-analog-static-main",
+  "deploymentType": "local"
+}

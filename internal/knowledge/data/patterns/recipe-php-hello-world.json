@@ -1,0 +1,33 @@
+{
+  "patternId": "recipe-php-hello-world",
+  "name": "Php Hello World",
+  "description": "Hello World application",
+  "framework": "Hello World",
+  "language": "PHP",
+  "tags": [
+    "php"
+  ],
+  "services": null,
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "base": "php@8.1",
+          "deploy": "./"
+        },
+        "run": {
+          "documentRoot": "public",
+          "ports": [
+            {
+              "httpSupport": true,
+              "port": 80
+            }
+          ]
+        },
+        "setup": "helloworld"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-php-hello-world-main",
+  "deploymentType": "local"
+}

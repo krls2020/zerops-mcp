@@ -1,0 +1,92 @@
+{
+  "patternId": "recipe-twenty",
+  "name": "Twenty",
+  "description": "Recipe Twenty application",
+  "framework": "Recipe Twenty",
+  "language": "Unknown",
+  "tags": [],
+  "services": null,
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "base": "nodejs@18",
+          "buildCommands": [
+            "git clone --branch v0.24.1 https://github.com/twentyhq/twenty.git",
+            "mkdir app",
+            "cd twenty\ncp ./package.json ./yarn.lock ./.yarnrc.yml ./tsconfig.base.json ./nx.json ../app/\ncp -r --parents ./.yarn/releases ../app/\ncp --parents ./packages/twenty-server/package.json ../app/\ncp -r --parents ./packages/twenty-server/patches ../app/\ncp --parents ./packages/twenty-front/package.json ../app/\ncp --parents ./packages/twenty-ui/package.json ../app/\n",
+            "cd app\nyarn \u0026\u0026 yarn cache clean \u0026\u0026 npx nx reset\n",
+            "cd twenty\ncp -r ./packages/twenty-front/. ../app/packages/twenty-front\ncp -r ./packages/twenty-ui/. ../app/packages/twenty-ui\n",
+            "cd app\nnpx nx build twenty-front\ncp -r ./packages/twenty-front/build/. ../public\n"
+          ],
+          "deployFiles": [
+            "./public/~/"
+          ],
+          "envVariables": {
+            "GENERATE_SOURCEMAP": "false",
+            "NODE_OPTIONS": "--max_old_space_size=16384",
+            "REACT_APP_SERVER_BASE_URL": "https://api-44d-3000.prg1.zerops.app"
+          }
+        },
+        "run": {
+          "base": "static"
+        },
+        "setup": "app"
+      },
+      {
+        "build": {
+          "base": "nodejs@18",
+          "buildCommands": [
+            "git clone --branch v0.24.1 https://github.com/twentyhq/twenty.git",
+            "mkdir api",
+            "cd twenty\ncp ./package.json ./yarn.lock ./.yarnrc.yml ./tsconfig.base.json ./nx.json ../api/\ncp -r --parents ./.yarn/releases ../api/\ncp --parents ./packages/twenty-emails/package.json ../api/\ncp --parents ./packages/twenty-server/package.json ../api/\ncp -r --parents ./packages/twenty-server/patches ../api/\n",
+            "cd api\nyarn \u0026\u0026 yarn cache clean \u0026\u0026 npx nx reset\n",
+            "cd twenty\ncp -r ./packages/twenty-emails/. ../api/packages/twenty-emails\ncp -r ./packages/twenty-server/. ../api/packages/twenty-server\n",
+            "cd api\nnpx nx run twenty-server:build\nmv ./packages/twenty-server/dist ./packages/twenty-server/build\nnpx nx run twenty-server:build:packageJson\nmv ./packages/twenty-server/dist/package.json ./packages/twenty-server/package.json\nrm -rf ./packages/twenty-server/dist\nmv ./packages/twenty-server/build ./packages/twenty-server/dist\n",
+            "cd api/packages/twenty-server\nyarn run database:init:prod\nyarn run command:prod workspace:seed:dev\nyarn run command:prod workspace:sync-metadata -f\n"
+          ],
+          "deployFiles": [
+            "./api/package.json",
+            "./api/node_modules/",
+            "./api/packages/twenty-server/package.json",
+            "./api/packages/twenty-server/node_modules/",
+            "./api/packages/twenty-server/dist/",
+            "./api/packages/twenty-emails/package.json",
+            "./api/packages/twenty-emails/dist/"
+          ],
+          "envVariables": {
+            "ACCESS_TOKEN_SECRET": "${RUNTIME_ACCESS_TOKEN_SECRET}",
+            "FILE_TOKEN_SECRET": "${RUNTIME_FILE_TOKEN_SECRET}",
+            "FRONT_BASE_URL": "${RUNTIME_FRONT_BASE_URL}",
+            "LOGIN_TOKEN_SECRET": "${RUNTIME_LOGIN_TOKEN_SECRET}",
+            "PG_DATABASE_URL": "${RUNTIME_PG_DATABASE_URL}",
+            "REFRESH_TOKEN_SECRET": "${RUNTIME_REFRESH_TOKEN_SECRET}",
+            "SERVER_URL": "${RUNTIME_SERVER_URL}",
+            "SIGN_IN_PREFILLED": "${RUNTIME_SIGN_IN_PREFILLED}"
+          },
+          "os": "ubuntu"
+        },
+        "run": {
+          "base": "nodejs@18",
+          "envVariables": {
+            "FRONT_BASE_URL": "https://app-44d.prg1.zerops.app",
+            "PG_DATABASE_URL": "postgres://${db_user}:${db_password}@${db_hostname}:${db_port}/${db_dbName}",
+            "SERVER_URL": "https://api-44d-3000.prg1.zerops.app:3000",
+            "SIGN_IN_PREFILLED": "true"
+          },
+          "os": "ubuntu",
+          "ports": [
+            {
+              "httpSupport": true,
+              "port": 3000
+            }
+          ],
+          "start": "cd ./api/packages/twenty-server \u0026\u0026 node ./dist/src/main"
+        },
+        "setup": "api"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-twenty-main",
+  "deploymentType": "local"
+}

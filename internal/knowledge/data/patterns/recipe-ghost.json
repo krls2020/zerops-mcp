@@ -1,0 +1,91 @@
+{
+  "patternId": "recipe-ghost",
+  "name": "Ghost",
+  "description": "Ghost service for Zerops",
+  "framework": "Recipe Ghost",
+  "language": "Unknown",
+  "tags": [],
+  "services": [
+    {
+      "hostname": "db",
+      "mode": "NON_HA",
+      "priority": 1,
+      "type": "mariadb@10.6"
+    },
+    {
+      "hostname": "storage",
+      "objectStoragePolicy": "public-objects-read",
+      "objectStorageSize": 2,
+      "priority": 1,
+      "type": "object-storage"
+    },
+    {
+      "buildFromGit": "https://github.com/zeropsio/recipe-ghost@main",
+      "enableSubdomainAccess": true,
+      "hostname": "ghost",
+      "maxContainers": 1,
+      "type": "nodejs@18",
+      "verticalAutoscaling": {
+        "minRam": 1
+      }
+    },
+    {
+      "buildFromGit": "https://github.com/zeropsio/recipe-mailpit@main",
+      "enableSubdomainAccess": true,
+      "hostname": "mailpit",
+      "type": "go@1"
+    }
+  ],
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "base": "nodejs@18",
+          "buildCommands": [
+            "sudo apk add git jq",
+            "cd ./current\nyarn\nyarn add ghost-storage-adapter-s3\nmkdir -p ./content/adapters/storage\ncp -r ./node_modules/ghost-storage-adapter-s3 ./content/adapters/storage/s3\n"
+          ],
+          "deployFiles": [
+            "content",
+            "current",
+            "versions",
+            ".ghost-cli",
+            "config.production.json"
+          ]
+        },
+        "run": {
+          "base": "nodejs@18",
+          "envVariables": {
+            "AWS_ACCESS_KEY_ID": "${storage_accessKeyId}",
+            "AWS_DEFAULT_REGION": "us-east-1",
+            "AWS_SECRET_ACCESS_KEY": "${storage_secretAccessKey}",
+            "GHOST_STORAGE_ADAPTER_S3_ASSET_HOST": "${storage_apiUrl}/${GHOST_STORAGE_ADAPTER_S3_PATH_BUCKET}",
+            "GHOST_STORAGE_ADAPTER_S3_ENDPOINT": "${storage_apiUrl}",
+            "GHOST_STORAGE_ADAPTER_S3_FORCE_PATH_STYLE": true,
+            "GHOST_STORAGE_ADAPTER_S3_PATH_BUCKET": "${storage_bucketName}",
+            "REGION": "usc1",
+            "STORAGE_HOSTNAME": "storage",
+            "database__connection__database": "${db_hostname}",
+            "database__connection__host": "${db_hostname}",
+            "database__connection__password": "${db_password}",
+            "database__connection__user": "${db_user}",
+            "url": "${zeropsSubdomain}"
+          },
+          "ports": [
+            {
+              "httpSupport": true,
+              "port": 2368
+            }
+          ],
+          "prepareCommands": [
+            "npm install -g ghost-cli"
+          ],
+          "start": "ghost run"
+        },
+        "setup": "ghost"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-ghost-main",
+  "deploymentType": "git"
+}

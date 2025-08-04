@@ -1,0 +1,70 @@
+{
+  "patternId": "recipe-nodejs",
+  "name": "Nodejs",
+  "description": "Recipe Nodejs application",
+  "framework": "Recipe Nodejs",
+  "language": "JavaScript",
+  "tags": [
+    "nodejs"
+  ],
+  "services": [
+    {
+      "enableSubdomainAccess": true,
+      "hostname": "api",
+      "type": "nodejs@20"
+    },
+    {
+      "hostname": "db",
+      "mode": "NON_HA",
+      "priority": 1,
+      "type": "postgresql@16"
+    }
+  ],
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "base": "nodejs@20",
+          "buildCommands": [
+            "npm i --verbose",
+            "npm run build"
+          ],
+          "deployFiles": [
+            "./dist",
+            "./node_modules",
+            "./package.json"
+          ],
+          "prepareCommands": [
+            "npm install -g typescript"
+          ]
+        },
+        "run": {
+          "base": "nodejs@20",
+          "envVariables": {
+            "DB_HOST": "db",
+            "DB_NAME": "db",
+            "DB_PASS": "${db_password}",
+            "DB_USER": "db",
+            "NODE_ENV": "production"
+          },
+          "healthCheck": {
+            "httpGet": {
+              "path": "/status",
+              "port": 3000
+            }
+          },
+          "ports": [
+            {
+              "httpSupport": true,
+              "port": 3000
+            }
+          ],
+          "start": "npm run start:prod"
+        },
+        "setup": "api"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-nodejs-main",
+  "deploymentType": "local"
+}

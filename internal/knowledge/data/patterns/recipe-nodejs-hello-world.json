@@ -1,0 +1,39 @@
+{
+  "patternId": "recipe-nodejs-hello-world",
+  "name": "Nodejs Hello World",
+  "description": "Hello World application",
+  "framework": "Hello World",
+  "language": "JavaScript",
+  "tags": [
+    "nodejs"
+  ],
+  "services": null,
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "base": "nodejs@18",
+          "buildCommands": [
+            "npm i"
+          ],
+          "deploy": [
+            "package.json",
+            "./app/index.js"
+          ]
+        },
+        "run": {
+          "ports": [
+            {
+              "httpSupport": true,
+              "port": 3000
+            }
+          ],
+          "start": "npm start"
+        },
+        "setup": "helloworld"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-nodejs-hello-world-main",
+  "deploymentType": "local"
+}

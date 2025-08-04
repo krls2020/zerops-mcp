@@ -1,0 +1,51 @@
+{
+  "patternId": "recipe-nitro-nodejs",
+  "name": "Nitro Nodejs",
+  "description": "Recipe Nitro Nodejs application",
+  "framework": "Recipe Nitro Nodejs",
+  "language": "JavaScript",
+  "tags": [
+    "nodejs"
+  ],
+  "services": [
+    {
+      "enableSubdomainAccess": true,
+      "hostname": "app",
+      "type": "nodejs@20"
+    }
+  ],
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "base": "nodejs@20",
+          "buildCommands": [
+            "pnpm i",
+            "pnpm run build"
+          ],
+          "deployFiles": [
+            ".output",
+            "package.json",
+            "node_modules"
+          ],
+          "envVariables": {
+            "SERVER_PRESET": "zerops"
+          }
+        },
+        "run": {
+          "base": "nodejs@20",
+          "ports": [
+            {
+              "httpSupport": true,
+              "port": 3000
+            }
+          ],
+          "start": "node .output/server/index.mjs"
+        },
+        "setup": "nitro"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-nitro-nodejs-main",
+  "deploymentType": "local"
+}

@@ -1,0 +1,12 @@
+{
+  "patternId": "ngrx-store-logger-master",
+  "name": "Ngrx Store Logger Master",
+  "description": "Ngrx Store Logger Master application",
+  "framework": "Ngrx Store Logger Master",
+  "language": "Unknown",
+  "tags": [],
+  "services": null,
+  "zeropsYml": null,
+  "sourceRecipe": "ngrx-store-logger-master-main",
+  "deploymentType": "local"
+}

@@ -1,0 +1,83 @@
+{
+  "patternId": "start-commands-example",
+  "name": "Start Commands Example",
+  "description": "Start Commands Example application",
+  "framework": "Start Commands Example",
+  "language": "Unknown",
+  "tags": [],
+  "services": [
+    {
+      "hostname": "storage",
+      "objectStorageSize": 2,
+      "type": "object-storage"
+    },
+    {
+      "enableSubdomainAccess": true,
+      "hostname": "api",
+      "type": "nodejs@20"
+    }
+  ],
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "base": "nodejs@20",
+          "buildCommands": [
+            "npm i",
+            "npm run build"
+          ],
+          "deployFiles": [
+            "./dist",
+            "./node_modules",
+            "./package.json",
+            "./litestream.yml"
+          ],
+          "prepareCommands": [
+            "npm install -g typescript"
+          ]
+        },
+        "run": {
+          "base": "nodejs@20",
+          "envVariables": {
+            "DB_NAME": "database.db",
+            "NODE_ENV": "production"
+          },
+          "healthCheck": {
+            "httpGet": {
+              "path": "/status",
+              "port": 3000
+            }
+          },
+          "ports": [
+            {
+              "httpSupport": true,
+              "port": 3000
+            }
+          ],
+          "prepareCommands": [
+            "wget https://github.com/benbjohnson/litestream/releases/download/v0.3.13/litestream-v0.3.13-linux-amd64.tar.gz",
+            "tar -xzf litestream-v0.3.13-linux-amd64.tar.gz",
+            "rm litestream-v0.3.13-linux-amd64.tar.gz",
+            "mv litestream /usr/local/bin/"
+          ],
+          "startCommands": [
+            {
+              "command": "npm run start:prod",
+              "name": "server"
+            },
+            {
+              "command": "litestream replicate -config=litestream.yml",
+              "initCommands": [
+                "litestream restore -if-replica-exists -if-db-not-exists -config=litestream.yml $DB_NAME"
+              ],
+              "name": "replication"
+            }
+          ]
+        },
+        "setup": "api"
+      }
+    ]
+  },
+  "sourceRecipe": "start-commands-example-main",
+  "deploymentType": "local"
+}

@@ -1,0 +1,40 @@
+{
+  "patternId": "recipe-react-static",
+  "name": "React Static",
+  "description": "React application",
+  "framework": "React",
+  "language": "JavaScript",
+  "tags": [
+    "react",
+    "static"
+  ],
+  "services": [
+    {
+      "enableSubdomainAccess": true,
+      "hostname": "app",
+      "type": "static"
+    }
+  ],
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "base": "nodejs@20",
+          "buildCommands": [
+            "pnpm i",
+            "pnpm build"
+          ],
+          "deployFiles": [
+            "dist/~"
+          ]
+        },
+        "run": {
+          "base": "static"
+        },
+        "setup": "app"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-react-static-main",
+  "deploymentType": "local"
+}

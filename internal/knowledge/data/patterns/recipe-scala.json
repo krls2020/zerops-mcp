@@ -1,0 +1,58 @@
+{
+  "patternId": "recipe-scala",
+  "name": "Scala",
+  "description": "Recipe Scala application",
+  "framework": "Recipe Scala",
+  "language": "Unknown",
+  "tags": [],
+  "services": [
+    {
+      "enableSubdomainAccess": true,
+      "hostname": "app",
+      "type": "ubuntu@22.04"
+    }
+  ],
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "base": "ubuntu@22.04",
+          "deployFiles": "/",
+          "prepareCommands": [
+            "sudo apt-get update -y",
+            "sudo apt-get install default-jdk -y",
+            "sudo apt-get install scala -y",
+            "echo \"deb https://repo.scala-sbt.org/scalasbt/debian all main\" | sudo tee /etc/apt/sources.list.d/sbt.list",
+            "echo \"deb https://repo.scala-sbt.org/scalasbt/debian /\" | sudo tee /etc/apt/sources.list.d/sbt_old.list",
+            "curl -sL \"https://keyserver.ubuntu.com/pks/lookup?op=get\u0026search=0x99E82A75642AC823\" | sudo apt-key add",
+            "sudo apt-get update -y",
+            "sudo apt-get install sbt -y"
+          ]
+        },
+        "run": {
+          "base": "ubuntu@22.04",
+          "ports": [
+            {
+              "httpSupport": true,
+              "port": 9000
+            }
+          ],
+          "prepareCommands": [
+            "sudo apt-get update -y",
+            "sudo apt-get install default-jdk -y",
+            "sudo apt-get install scala -y",
+            "echo \"deb https://repo.scala-sbt.org/scalasbt/debian all main\" | sudo tee /etc/apt/sources.list.d/sbt.list",
+            "echo \"deb https://repo.scala-sbt.org/scalasbt/debian /\" | sudo tee /etc/apt/sources.list.d/sbt_old.list",
+            "curl -sL \"https://keyserver.ubuntu.com/pks/lookup?op=get\u0026search=0x99E82A75642AC823\" | sudo apt-key add",
+            "sudo apt-get update -y",
+            "sudo apt-get install sbt -y"
+          ],
+          "start": "sbt run"
+        },
+        "setup": "app"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-scala-main",
+  "deploymentType": "local"
+}

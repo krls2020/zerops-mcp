@@ -1,0 +1,14 @@
+{
+  "patternId": "recipe-slack-nodejs",
+  "name": "Slack Nodejs",
+  "description": "Recipe Slack Nodejs application",
+  "framework": "Recipe Slack Nodejs",
+  "language": "JavaScript",
+  "tags": [
+    "nodejs"
+  ],
+  "services": null,
+  "zeropsYml": null,
+  "sourceRecipe": "recipe-slack-nodejs-main",
+  "deploymentType": "local"
+}

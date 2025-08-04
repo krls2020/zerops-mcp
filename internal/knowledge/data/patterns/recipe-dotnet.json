@@ -1,0 +1,62 @@
+{
+  "patternId": "recipe-dotnet",
+  "name": "Dotnet",
+  "description": "Recipe Dotnet application",
+  "framework": "Recipe Dotnet",
+  "language": "C#",
+  "tags": [
+    "dotnet"
+  ],
+  "services": [
+    {
+      "enableSubdomainAccess": true,
+      "hostname": "api",
+      "type": "dotnet@6"
+    },
+    {
+      "hostname": "db",
+      "mode": "NON_HA",
+      "priority": 1,
+      "type": "postgresql@16"
+    }
+  ],
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "base": "dotnet@6",
+          "buildCommands": [
+            "dotnet build -o app"
+          ],
+          "deployFiles": "app/~"
+        },
+        "run": {
+          "base": "dotnet@6",
+          "envVariables": {
+            "DB_HOST": "${db_hostname}",
+            "DB_NAME": "db",
+            "DB_PASS": "${db_password}",
+            "DB_PORT": "${db_port}",
+            "DB_USER": "${db_user}"
+          },
+          "healthCheck": {
+            "httpGet": {
+              "path": "/status",
+              "port": 5000
+            }
+          },
+          "ports": [
+            {
+              "httpSupport": true,
+              "port": 5000
+            }
+          ],
+          "start": "dotnet dotnet.dll"
+        },
+        "setup": "api"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-dotnet-main",
+  "deploymentType": "local"
+}

@@ -1,0 +1,44 @@
+{
+  "patternId": "recipe-flask",
+  "name": "Flask",
+  "description": "Flask application",
+  "framework": "Flask",
+  "language": "Python",
+  "tags": [
+    "flask"
+  ],
+  "services": null,
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "addToRunPrepare": [
+            "requirements.txt"
+          ],
+          "base": "python@3.12",
+          "deployFiles": [
+            "/"
+          ],
+          "os": "alpine"
+        },
+        "run": {
+          "base": "python@3.12",
+          "os": "alpine",
+          "ports": [
+            {
+              "httpSupport": true,
+              "port": 8000
+            }
+          ],
+          "prepareCommands": [
+            "pip install --no-cache-dir -r requirements.txt"
+          ],
+          "start": "python app.py"
+        },
+        "setup": "python"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-flask-main",
+  "deploymentType": "local"
+}

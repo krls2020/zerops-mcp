@@ -1,0 +1,61 @@
+{
+  "patternId": "recipe-elixir",
+  "name": "Elixir",
+  "description": "Recipe Elixir application",
+  "framework": "Recipe Elixir",
+  "language": "Elixir",
+  "tags": [
+    "elixir"
+  ],
+  "services": [
+    {
+      "enableSubdomainAccess": true,
+      "hostname": "api",
+      "type": "elixir@1.16"
+    },
+    {
+      "hostname": "db",
+      "mode": "NON_HA",
+      "type": "postgresql@16"
+    }
+  ],
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "base": "elixir@1.16",
+          "buildCommands": [
+            "mix deps.get --only prod",
+            "mix ecto.create",
+            "mix ecto.migrate",
+            "mix compile",
+            "mix release --overwrite"
+          ],
+          "deployFiles": "_build/prod/rel/app/~",
+          "envVariables": {
+            "DATABASE_URL": "${db_connectionString}/${db_dbName}",
+            "MIX_ENV": "prod"
+          }
+        },
+        "run": {
+          "base": "alpine@latest",
+          "envVariables": {
+            "DATABASE_URL": "${db_connectionString}/${db_dbName}",
+            "POOL_SIZE": 10,
+            "PORT": 4000
+          },
+          "ports": [
+            {
+              "httpSupport": true,
+              "port": 4000
+            }
+          ],
+          "start": "bin/app start"
+        },
+        "setup": "api"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-elixir-main",
+  "deploymentType": "local"
+}

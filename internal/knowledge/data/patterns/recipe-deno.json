@@ -1,0 +1,64 @@
+{
+  "patternId": "recipe-deno",
+  "name": "Deno",
+  "description": "Recipe Deno application",
+  "framework": "Recipe Deno",
+  "language": "TypeScript",
+  "tags": [
+    "deno"
+  ],
+  "services": [
+    {
+      "enableSubdomainAccess": true,
+      "hostname": "api",
+      "type": "deno@1"
+    },
+    {
+      "hostname": "db",
+      "mode": "NON_HA",
+      "priority": 1,
+      "type": "postgresql@16"
+    }
+  ],
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "base": "deno@1",
+          "buildCommands": [
+            "deno task build"
+          ],
+          "deployFiles": [
+            "dist",
+            "deno.jsonc"
+          ]
+        },
+        "run": {
+          "base": "deno@1",
+          "envVariables": {
+            "DB_HOST": "db",
+            "DB_NAME": "db",
+            "DB_PASS": "${db_password}",
+            "DB_USER": "db"
+          },
+          "healthCheck": {
+            "httpGet": {
+              "path": "/status",
+              "port": 8000
+            }
+          },
+          "ports": [
+            {
+              "httpSupport": true,
+              "port": 8000
+            }
+          ],
+          "start": "deno task start"
+        },
+        "setup": "api"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-deno-main",
+  "deploymentType": "local"
+}

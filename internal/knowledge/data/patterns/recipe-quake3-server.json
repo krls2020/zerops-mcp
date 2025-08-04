@@ -1,0 +1,108 @@
+{
+  "patternId": "recipe-quake3-server",
+  "name": "Quake3 Server",
+  "description": "Quake3 Server service for Zerops",
+  "framework": "Recipe Quake3 Server",
+  "language": "Unknown",
+  "tags": [],
+  "services": [
+    {
+      "buildFromGit": "https://github.com/zeropsio/recipe-quake3-server@main",
+      "hostname": "q3server",
+      "type": "ubuntu@22.04",
+      "zeropsSetup": {
+        "build": {
+          "deployFiles": [
+            "q3server.cfg"
+          ]
+        },
+        "run": {
+          "base": "ubuntu@22.04",
+          "envReplace": {
+            "delimiter": "%",
+            "target": "q3server.cfg"
+          },
+          "envVariables": {
+            "ENABLE_BOTS": 1,
+            "FRAG_LIMIT": 30,
+            "MAX_PLAYERS": 16,
+            "MIN_PLAYERS": 8,
+            "MOTD": "Welcome to zerops.io Quake 3: Arena",
+            "SV_HOSTNAME": "Quake 3: Arena server hosted on zerops.io",
+            "TIME_LIMIT": 10
+          },
+          "initCommands": [
+            "mv q3server.cfg serverfiles/baseq3/q3server.cfg",
+            "./q3server start"
+          ],
+          "os": "ubuntu",
+          "ports": [
+            {
+              "description": "game \u0026 query port",
+              "port": 27960,
+              "protocol": "udp"
+            }
+          ],
+          "prepareCommands": [
+            "sudo dpkg --add-architecture i386",
+            "sudo apt-get update",
+            "sudo apt-get install -y jq",
+            "cd /var/www \u0026\u0026 curl -Lo linuxgsm.sh https://linuxgsm.sh \u0026\u0026 chmod +x linuxgsm.sh \u0026\u0026 sudo -u zerops -n bash linuxgsm.sh q3server",
+            "cd /var/www \u0026\u0026 sudo -u zerops -n ./q3server auto-install"
+          ],
+          "start": "tail -f log/console/q3server-console.log"
+        }
+      }
+    }
+  ],
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "deployFiles": [
+            "q3server.cfg"
+          ]
+        },
+        "run": {
+          "base": "ubuntu@22.04",
+          "envReplace": {
+            "delimiter": "%",
+            "target": "q3server.cfg"
+          },
+          "envVariables": {
+            "ENABLE_BOTS": 1,
+            "FRAG_LIMIT": 30,
+            "MAX_PLAYERS": 16,
+            "MIN_PLAYERS": 8,
+            "MOTD": "Welcome to zerops.io Quake 3: Arena",
+            "SV_HOSTNAME": "Quake 3: Arena server hosted on zerops.io",
+            "TIME_LIMIT": 10
+          },
+          "initCommands": [
+            "mv q3server.cfg serverfiles/baseq3/q3server.cfg",
+            "./q3server start"
+          ],
+          "os": "ubuntu",
+          "ports": [
+            {
+              "description": "game \u0026 query port",
+              "port": 27960,
+              "protocol": "udp"
+            }
+          ],
+          "prepareCommands": [
+            "sudo dpkg --add-architecture i386",
+            "sudo apt-get update",
+            "sudo apt-get install -y jq",
+            "cd /var/www \u0026\u0026 curl -Lo linuxgsm.sh https://linuxgsm.sh \u0026\u0026 chmod +x linuxgsm.sh \u0026\u0026 sudo -u zerops -n bash linuxgsm.sh q3server",
+            "cd /var/www \u0026\u0026 sudo -u zerops -n ./q3server auto-install"
+          ],
+          "start": "tail -f log/console/q3server-console.log"
+        },
+        "setup": "server"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-quake3-server-main",
+  "deploymentType": "git"
+}

@@ -1,0 +1,83 @@
+{
+  "patternId": "recipe-umami",
+  "name": "Umami",
+  "description": "Recipe Umami application",
+  "framework": "Recipe Umami",
+  "language": "Unknown",
+  "tags": [],
+  "services": [
+    {
+      "hostname": "db",
+      "mode": "NON_HA",
+      "priority": 1,
+      "type": "postgresql@16"
+    },
+    {
+      "enableSubdomainAccess": true,
+      "envSecrets": {
+        "APP_SECRET": "\u003c@generateRandomString(\u003c64\u003e)\u003e"
+      },
+      "hostname": "umami",
+      "type": "nodejs@20"
+    }
+  ],
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "base": "nodejs@20",
+          "buildCommands": [
+            "git clone https://github.com/umami-software/umami.git",
+            "cd umami\ngit checkout tags/v2.12.1\nyarn install --frozen-lockfile\nyarn build-docker\n",
+            "cd umami\nmv ./node_modules ./dev_node_modules\nyarn add npm-run-all dotenv prisma semver --no-lockfile\n"
+          ],
+          "deploy": [
+            "umami/~next.config.js",
+            "umami/~public/",
+            "umami/~package.json",
+            "umami/~prisma/",
+            "umami/~scripts/",
+            "umami/.next/standalone/~",
+            "umami/~.next/static/",
+            "umami/~node_modules/"
+          ],
+          "envVariables": {
+            "DATABASE_URL": "${db_connectionString}/${db_hostname}"
+          },
+          "prepareCommands": [
+            "sudo apk add git",
+            "npm install -g yarn@1.22.10 --force",
+            "yarn global add npm-run-all"
+          ]
+        },
+        "run": {
+          "base": "nodejs@20",
+          "envVariables": {
+            "DATABASE_URL": "${db_connectionString}/${db_hostname}",
+            "NEXT_TELEMETRY_DISABLED": "1",
+            "NODE_ENV": "production"
+          },
+          "healthCheck": {
+            "httpGet": {
+              "path": "/api/heartbeat",
+              "port": 3000
+            }
+          },
+          "ports": [
+            {
+              "httpSupport": true,
+              "port": 3000
+            }
+          ],
+          "prepareCommands": [
+            "npm install -g yarn@1.22.10 --force"
+          ],
+          "start": "yarn start-docker"
+        },
+        "setup": "umami"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-umami-main",
+  "deploymentType": "local"
+}

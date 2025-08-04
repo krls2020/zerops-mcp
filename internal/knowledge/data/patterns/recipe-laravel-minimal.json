@@ -1,0 +1,131 @@
+{
+  "patternId": "recipe-laravel-minimal",
+  "name": "Laravel Minimal",
+  "description": "Laravel application - minimal setup",
+  "framework": "Laravel",
+  "language": "PHP",
+  "tags": [
+    "laravel",
+    "minimal"
+  ],
+  "services": [
+    {
+      "enableSubdomainAccess": true,
+      "envSecrets": {
+        "APP_KEY": "<@generateRandomString(<32>)>"
+      },
+      "hostname": "app",
+      "minContainers": 2,
+      "type": "php-nginx@8.4"
+    },
+    {
+      "hostname": "db",
+      "mode": "NON_HA",
+      "priority": 10,
+      "type": "postgresql@16"
+    }
+  ],
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "base": [
+            "php@8.4"
+          ],
+          "buildCommands": [
+            "composer install --ignore-platform-reqs"
+          ],
+          "cache": [
+            "vendor",
+            "composer.lock"
+          ],
+          "deployFiles": "./",
+          "os": "alpine"
+        },
+        "deploy": {
+          "readinessCheck": {
+            "httpGet": {
+              "path": "/up",
+              "port": 80
+            }
+          }
+        },
+        "run": {
+          "base": "php-nginx@8.4",
+          "envVariables": {
+            "APP_DEBUG": false,
+            "APP_ENV": "production",
+            "APP_FAKER_LOCALE": "en_US",
+            "APP_FALLBACK_LOCALE": "en",
+            "APP_LOCALE": "en",
+            "APP_MAINTENANCE_DRIVER": "file",
+            "APP_MAINTENANCE_STORE": "database",
+            "APP_NAME": "Laravel Minimal X Zerops",
+            "APP_TIMEZONE": "UTC",
+            "APP_URL": "${zeropsSubdomain}",
+            "BROADCAST_CONNECTION": "log",
+            "CACHE_STORE": "database",
+            "DB_CONNECTION": "pgsql",
+            "DB_DATABASE": "db",
+            "DB_HOST": "db",
+            "DB_PASSWORD": "${db_password}",
+            "DB_PORT": 5432,
+            "DB_USERNAME": "${db_user}",
+            "FILESYSTEM_DISK": "local",
+            "LOG_CHANNEL": "syslog",
+            "LOG_LEVEL": "debug",
+            "LOG_STACK": "single",
+            "MAIL_ENCRYPTION": null,
+            "MAIL_FROM_ADDRESS": "hello@zerops.io",
+            "MAIL_FROM_NAME": "${APP_NAME}",
+            "MAIL_HOST": "127.0.0.1",
+            "MAIL_MAILER": "log",
+            "MAIL_PASSWORD": null,
+            "MAIL_PORT": 2525,
+            "MAIL_USERNAME": null,
+            "QUEUE_CONNECTION": "database",
+            "SESSION_DOMAIN": null,
+            "SESSION_DRIVER": "database",
+            "SESSION_ENCRYPT": false,
+            "SESSION_LIFETIME": 120,
+            "SESSION_PATH": "/"
+          },
+          "healthCheck": {
+            "httpGet": {
+              "path": "/up",
+              "port": 80
+            }
+          },
+          "initCommands": [
+            "php artisan view:cache",
+            "php artisan config:cache",
+            "php artisan route:cache",
+            "sudo -E -u zerops -- zsc execOnce ${appVersionId} -- php artisan migrate --force",
+            "php artisan optimize"
+          ],
+          "os": "alpine",
+          "siteConfigPath": "site.conf.tmpl"
+        },
+        "setup": "app"
+      }
+    ]
+  },
+  "commonIssues": [
+    {
+      "issue": "Migration fails",
+      "solution": "Add --isolated flag to migration command"
+    },
+    {
+      "issue": "Storage not writable",
+      "solution": "Storage directory is automatically writable in Zerops"
+    }
+  ],
+  "bestPractices": [
+    "Use php-apache@8.3 for Laravel",
+    "Cache all configurations in build",
+    "Use Valkey for sessions and cache",
+    "Enable OPcache for production"
+  ],
+  "sourceRecipe": "recipe-laravel-minimal-main",
+  "deploymentType": "local"
+}

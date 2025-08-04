@@ -1,0 +1,51 @@
+{
+  "patternId": "recipe-nextjs-nodejs",
+  "name": "Nextjs Nodejs",
+  "description": "Next.js application",
+  "framework": "Next.js",
+  "language": "JavaScript",
+  "tags": [
+    "nextjs",
+    "nodejs"
+  ],
+  "services": [
+    {
+      "enableSubdomainAccess": true,
+      "hostname": "app",
+      "type": "nodejs@20"
+    }
+  ],
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "base": "nodejs@20",
+          "buildCommands": [
+            "pnpm i",
+            "pnpm run build"
+          ],
+          "deployFiles": "./"
+        },
+        "run": {
+          "base": "nodejs@20",
+          "ports": [
+            {
+              "httpSupport": true,
+              "port": 3000
+            }
+          ],
+          "start": "pnpm start"
+        },
+        "setup": "app"
+      }
+    ]
+  },
+  "bestPractices": [
+    "Use standalone build for smaller images",
+    "Enable ISR for dynamic content",
+    "Use environment variables for API URLs",
+    "Cache node_modules between builds"
+  ],
+  "sourceRecipe": "recipe-nextjs-nodejs-main",
+  "deploymentType": "local"
+}

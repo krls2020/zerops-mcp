@@ -1,0 +1,40 @@
+{
+  "patternId": "recipe-svelte-static",
+  "name": "Svelte Static",
+  "description": "Svelte application",
+  "framework": "Svelte",
+  "language": "Unknown",
+  "tags": [
+    "svelte",
+    "static"
+  ],
+  "services": [
+    {
+      "enableSubdomainAccess": true,
+      "hostname": "app",
+      "type": "static"
+    }
+  ],
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "base": "nodejs@20",
+          "buildCommands": [
+            "pnpm i",
+            "pnpm build"
+          ],
+          "deployFiles": [
+            "build/~"
+          ]
+        },
+        "run": {
+          "base": "static"
+        },
+        "setup": "app"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-svelte-static-main",
+  "deploymentType": "local"
+}

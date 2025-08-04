@@ -1,0 +1,44 @@
+{
+  "patternId": "recipe-ember",
+  "name": "Ember",
+  "description": "Recipe Ember application",
+  "framework": "Recipe Ember",
+  "language": "Unknown",
+  "tags": [],
+  "services": [
+    {
+      "enableSubdomainAccess": true,
+      "hostname": "app",
+      "type": "nodejs@20"
+    }
+  ],
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "base": "nodejs@20",
+          "buildCommands": [
+            "pnpm i",
+            "pnpm run build"
+          ],
+          "deployFiles": [
+            "/"
+          ]
+        },
+        "run": {
+          "base": "nodejs@20",
+          "ports": [
+            {
+              "httpSupport": true,
+              "port": 4200
+            }
+          ],
+          "start": "pnpm start"
+        },
+        "setup": "app"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-ember-main",
+  "deploymentType": "local"
+}

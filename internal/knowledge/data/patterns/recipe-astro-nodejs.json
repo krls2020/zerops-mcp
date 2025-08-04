@@ -1,0 +1,53 @@
+{
+  "patternId": "recipe-astro-nodejs",
+  "name": "Astro Nodejs",
+  "description": "Astro application",
+  "framework": "Astro",
+  "language": "JavaScript",
+  "tags": [
+    "astro",
+    "nodejs"
+  ],
+  "services": [
+    {
+      "enableSubdomainAccess": true,
+      "hostname": "app",
+      "type": "nodejs@20"
+    }
+  ],
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "base": "nodejs@20",
+          "buildCommands": [
+            "pnpm i",
+            "pnpm run build"
+          ],
+          "deployFiles": [
+            "dist",
+            "package.json",
+            "node_modules"
+          ]
+        },
+        "run": {
+          "base": "nodejs@20",
+          "envVariables": {
+            "HOST": "0.0.0.0",
+            "PORT": 3000
+          },
+          "ports": [
+            {
+              "httpSupport": true,
+              "port": 3000
+            }
+          ],
+          "start": "pnpm start"
+        },
+        "setup": "app"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-astro-nodejs-main",
+  "deploymentType": "local"
+}

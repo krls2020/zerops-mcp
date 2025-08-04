@@ -1,0 +1,47 @@
+{
+  "patternId": "recipe-meteor",
+  "name": "Meteor",
+  "description": "Recipe Meteor application",
+  "framework": "Recipe Meteor",
+  "language": "Unknown",
+  "tags": [],
+  "services": [
+    {
+      "enableSubdomainAccess": true,
+      "hostname": "app",
+      "type": "nodejs@20"
+    }
+  ],
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "base": "nodejs@20",
+          "buildCommands": [
+            "pnpm i"
+          ],
+          "deployFiles": [
+            "/"
+          ]
+        },
+        "run": {
+          "base": "ubuntu@latest",
+          "os": "ubuntu",
+          "ports": [
+            {
+              "httpSupport": true,
+              "port": 3000
+            }
+          ],
+          "prepareCommands": [
+            "curl https://install.meteor.com/ | sh"
+          ],
+          "start": "pnpm start"
+        },
+        "setup": "app"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-meteor-main",
+  "deploymentType": "local"
+}

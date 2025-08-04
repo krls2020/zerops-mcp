@@ -1,0 +1,37 @@
+{
+  "patternId": "recipe-adminerevo",
+  "name": "Adminerevo",
+  "description": "Adminerevo service for Zerops",
+  "framework": "Recipe Adminerevo",
+  "language": "Unknown",
+  "tags": [],
+  "services": null,
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "base": "php@8.3",
+          "buildCommands": [
+            "wget https://download.adminerevo.org/latest/adminer/adminer.zip\nunzip adminer.zip\nmv adminer.php index.php\n"
+          ],
+          "deployFiles": "index.php",
+          "prepareCommands": [
+            "sudo apk add wget unzip"
+          ]
+        },
+        "run": {
+          "base": "php-apache@8.3",
+          "ports": [
+            {
+              "httpSupport": true,
+              "port": 80
+            }
+          ]
+        },
+        "setup": "adminerevo"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-adminerevo-main",
+  "deploymentType": "git"
+}

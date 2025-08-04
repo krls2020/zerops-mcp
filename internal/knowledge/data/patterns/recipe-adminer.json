@@ -1,0 +1,37 @@
+{
+  "patternId": "recipe-adminer",
+  "name": "Adminer",
+  "description": "Adminer service for Zerops",
+  "framework": "Recipe Adminer",
+  "language": "Unknown",
+  "tags": [],
+  "services": null,
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "base": "php@8.3",
+          "buildCommands": [
+            "wget https://github.com/vrana/adminer/releases/download/v5.2.1/adminer-5.2.1.php\nmv adminer-5.2.1.php index.php\n"
+          ],
+          "deployFiles": "index.php",
+          "prepareCommands": [
+            "sudo apk add wget"
+          ]
+        },
+        "run": {
+          "base": "php-apache@8.3",
+          "ports": [
+            {
+              "httpSupport": true,
+              "port": 80
+            }
+          ]
+        },
+        "setup": "adminer"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-adminer-main",
+  "deploymentType": "git"
+}

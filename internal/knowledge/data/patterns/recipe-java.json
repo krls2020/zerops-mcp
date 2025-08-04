@@ -1,0 +1,62 @@
+{
+  "patternId": "recipe-java",
+  "name": "Java",
+  "description": "Recipe Java application",
+  "framework": "Recipe Java",
+  "language": "Java",
+  "tags": [
+    "java"
+  ],
+  "services": [
+    {
+      "enableSubdomainAccess": true,
+      "hostname": "api",
+      "type": "java@17"
+    },
+    {
+      "hostname": "db",
+      "mode": "NON_HA",
+      "type": "postgresql@16"
+    }
+  ],
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "base": "java@17",
+          "buildCommands": [
+            "./mvnw clean install"
+          ],
+          "deployFiles": [
+            "target/recipe-1.0.0.jar"
+          ]
+        },
+        "run": {
+          "base": "java@17",
+          "envVariables": {
+            "DB_HOST": "db",
+            "DB_NAME": "db",
+            "DB_PASS": "${db_password}",
+            "DB_USER": "db"
+          },
+          "healthCheck": {
+            "httpGet": {
+              "path": "/status",
+              "port": 8080
+            }
+          },
+          "ports": [
+            {
+              "httpSupport": true,
+              "port": 8080
+            }
+          ],
+          "start": "java -jar target/recipe-1.0.0.jar"
+        },
+        "setup": "api"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-java-main",
+  "deploymentType": "local"
+}

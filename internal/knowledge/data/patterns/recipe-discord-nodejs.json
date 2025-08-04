@@ -1,0 +1,45 @@
+{
+  "patternId": "recipe-discord-nodejs",
+  "name": "Discord Nodejs",
+  "description": "Recipe Discord Nodejs application",
+  "framework": "Recipe Discord Nodejs",
+  "language": "JavaScript",
+  "tags": [
+    "nodejs"
+  ],
+  "services": [
+    {
+      "envSecrets": {
+        "DISCORD_CLIENT_ID": null,
+        "DISCORD_TOKEN": null
+      },
+      "hostname": "discordnode",
+      "type": "nodejs@20"
+    }
+  ],
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "base": "nodejs@20",
+          "buildCommands": [
+            "pnpm i",
+            "pnpm run build"
+          ],
+          "deployFiles": [
+            "dist",
+            "package.json",
+            "node_modules"
+          ]
+        },
+        "run": {
+          "base": "nodejs@20",
+          "start": "pnpm start"
+        },
+        "setup": "discordnode"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-discord-nodejs-main",
+  "deploymentType": "local"
+}

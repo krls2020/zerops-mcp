@@ -1,0 +1,44 @@
+{
+  "patternId": "recipe-yew",
+  "name": "Yew",
+  "description": "Recipe Yew application",
+  "framework": "Recipe Yew",
+  "language": "Unknown",
+  "tags": [],
+  "services": null,
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "base": "rust@1.78",
+          "buildCommands": [
+            "trunk build"
+          ],
+          "deployFiles": [
+            "/"
+          ],
+          "prepareCommands": [
+            "cargo install trunk --locked"
+          ]
+        },
+        "run": {
+          "base": "ubuntu@22.04",
+          "ports": [
+            {
+              "httpSupport": true,
+              "port": 8080
+            }
+          ],
+          "prepareCommands": [
+            "curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh",
+            "cargo install trunk --locked"
+          ],
+          "start": "trunk serve"
+        },
+        "setup": "bot"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-yew-main",
+  "deploymentType": "local"
+}

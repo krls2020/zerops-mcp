@@ -1,0 +1,52 @@
+{
+  "patternId": "recipe-mailpit",
+  "name": "Mailpit",
+  "description": "Mailpit service for Zerops",
+  "framework": "Recipe Mailpit",
+  "language": "Unknown",
+  "tags": [],
+  "services": [
+    {
+      "buildFromGit": "https://github.com/zeropsio/recipe-mailpit",
+      "enableSubdomainAccess": true,
+      "hostname": "mailpit",
+      "type": "alpine@3.20"
+    }
+  ],
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "buildCommands": [
+            "sh download-mailpit.sh"
+          ],
+          "deployFiles": "./mailpit"
+        },
+        "deploy": {
+          "readinessCheck": {
+            "httpGet": {
+              "path": "/",
+              "port": 8025
+            }
+          }
+        },
+        "run": {
+          "base": "alpine@3.20",
+          "ports": [
+            {
+              "httpSupport": true,
+              "port": 8025
+            },
+            {
+              "port": 1025
+            }
+          ],
+          "start": "./mailpit"
+        },
+        "setup": "mailpit"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-mailpit-main",
+  "deploymentType": "git"
+}

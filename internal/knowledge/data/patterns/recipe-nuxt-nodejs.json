@@ -1,0 +1,50 @@
+{
+  "patternId": "recipe-nuxt-nodejs",
+  "name": "Nuxt Nodejs",
+  "description": "Nuxt application",
+  "framework": "Nuxt",
+  "language": "JavaScript",
+  "tags": [
+    "nuxt",
+    "nodejs"
+  ],
+  "services": [
+    {
+      "enableSubdomainAccess": true,
+      "hostname": "app",
+      "type": "nodejs@20"
+    }
+  ],
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "base": "nodejs@20",
+          "buildCommands": [
+            "yarn",
+            "yarn build"
+          ],
+          "deployFiles": [
+            ".output/~"
+          ],
+          "prepareCommands": [
+            "node -v"
+          ]
+        },
+        "run": {
+          "base": "nodejs@20",
+          "ports": [
+            {
+              "httpSupport": true,
+              "port": 3000
+            }
+          ],
+          "start": "node server/index.mjs"
+        },
+        "setup": "app"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-nuxt-nodejs-main",
+  "deploymentType": "local"
+}

@@ -1,0 +1,97 @@
+{
+  "patternId": "recipe-php",
+  "name": "Php",
+  "description": "Recipe Php application",
+  "framework": "Recipe Php",
+  "language": "PHP",
+  "tags": [
+    "php"
+  ],
+  "services": [
+    {
+      "enableSubdomainAccess": true,
+      "hostname": "apacheapi",
+      "type": "php-apache@8.3"
+    },
+    {
+      "enableSubdomainAccess": true,
+      "hostname": "nginxapi",
+      "type": "php-nginx@8.3"
+    },
+    {
+      "hostname": "db",
+      "mode": "NON_HA",
+      "priority": 1,
+      "type": "postgresql@16"
+    }
+  ],
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "base": [
+            "php@8.3"
+          ],
+          "buildCommands": [
+            "composer install --optimize-autoloader --no-dev"
+          ],
+          "deployFiles": [
+            "./index.php",
+            "./.htaccess",
+            "./vendor"
+          ]
+        },
+        "run": {
+          "base": "php-apache@8.3",
+          "envVariables": {
+            "DB_HOST": "db",
+            "DB_NAME": "db",
+            "DB_PASS": "${db_password}",
+            "DB_PORT": 5432,
+            "DB_USER": "db"
+          },
+          "healthCheck": {
+            "httpGet": {
+              "path": "/status",
+              "port": 80
+            }
+          }
+        },
+        "setup": "apacheapi"
+      },
+      {
+        "build": {
+          "base": [
+            "php@8.3"
+          ],
+          "buildCommands": [
+            "composer install --optimize-autoloader --no-dev"
+          ],
+          "deployFiles": [
+            "./index.php",
+            "./vendor"
+          ]
+        },
+        "run": {
+          "base": "php-nginx@8.3",
+          "envVariables": {
+            "DB_HOST": "db",
+            "DB_NAME": "db",
+            "DB_PASS": "${db_password}",
+            "DB_PORT": 5432,
+            "DB_USER": "db"
+          },
+          "healthCheck": {
+            "httpGet": {
+              "path": "/status",
+              "port": 80
+            }
+          }
+        },
+        "setup": "nginxapi"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-php-main",
+  "deploymentType": "local"
+}

@@ -1,0 +1,41 @@
+{
+  "patternId": "recipe-discord-py",
+  "name": "Discord Py",
+  "description": "Recipe Discord Py application",
+  "framework": "Recipe Discord Py",
+  "language": "Unknown",
+  "tags": [],
+  "services": [
+    {
+      "envSecrets": {
+        "DISCORD_CLIENT_ID": null,
+        "DISCORD_TOKEN": null
+      },
+      "hostname": "discordpy",
+      "type": "python@3.12"
+    }
+  ],
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "addToRunPrepare": [
+            "requirements.txt"
+          ],
+          "base": "python@3.12",
+          "deployFiles": "/~"
+        },
+        "run": {
+          "base": "python@3.12",
+          "prepareCommands": [
+            "python3 -m pip install --ignore-installed -r requirements.txt"
+          ],
+          "start": "python3 bot.py"
+        },
+        "setup": "discordpy"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-discord-py-main",
+  "deploymentType": "local"
+}

@@ -1,0 +1,42 @@
+{
+  "patternId": "recipe-discord-bun",
+  "name": "Discord Bun",
+  "description": "Recipe Discord Bun application",
+  "framework": "Recipe Discord Bun",
+  "language": "TypeScript",
+  "tags": [
+    "bun"
+  ],
+  "services": [
+    {
+      "envSecrets": {
+        "DISCORD_CLIENT_ID": null,
+        "DISCORD_TOKEN": null
+      },
+      "hostname": "discordbun",
+      "type": "bun@1.1"
+    }
+  ],
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "base": "bun@1.1",
+          "buildCommands": [
+            "bun i"
+          ],
+          "deployFiles": [
+            "/"
+          ]
+        },
+        "run": {
+          "base": "bun@1.1",
+          "start": "bun start"
+        },
+        "setup": "discordbun"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-discord-bun-main",
+  "deploymentType": "local"
+}

@@ -1,0 +1,112 @@
+{
+  "patternId": "recipe-directus",
+  "name": "Directus",
+  "description": "Directus service for Zerops",
+  "framework": "Recipe Directus",
+  "language": "Unknown",
+  "tags": [],
+  "services": [
+    {
+      "hostname": "storage",
+      "objectStorageSize": 2,
+      "type": "object-storage"
+    },
+    {
+      "hostname": "redis",
+      "mode": "NON_HA",
+      "type": "valkey@7.2"
+    },
+    {
+      "hostname": "db",
+      "mode": "NON_HA",
+      "type": "postgresql@16"
+    },
+    {
+      "buildFromGit": "https://github.com/zeropsio/recipe-mailpit",
+      "enableSubdomainAccess": true,
+      "hostname": "mailpit",
+      "type": "alpine@3.20"
+    },
+    {
+      "buildFromGit": "https://github.com/zeropsio/recipe-directus",
+      "enableSubdomainAccess": true,
+      "envSecrets": {
+        "ADMIN_EMAIL": "admin@example.com",
+        "ADMIN_PASSWORD": "\u003c@generateRandomString(\u003c12\u003e)\u003e",
+        "ADMIN_TOKEN": "\u003c@generateRandomString(\u003c32\u003e)\u003e",
+        "SECRET": "\u003c@generateRandomString(\u003c32\u003e)\u003e"
+      },
+      "hostname": "directus",
+      "type": "nodejs@22",
+      "verticalAutoscaling": {
+        "minFreeRamGB": 0.125,
+        "minRam": 0.25
+      }
+    }
+  ],
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "base": "nodejs@22",
+          "buildCommands": [
+            "npm i"
+          ],
+          "cache": [
+            "node_modules"
+          ],
+          "deployFiles": [
+            "./"
+          ]
+        },
+        "run": {
+          "base": "nodejs@22",
+          "envVariables": {
+            "CACHE_AUTO_PURGE": true,
+            "CACHE_ENABLED": true,
+            "CACHE_STORE": "redis",
+            "CACHE_TTL": "5m",
+            "CORS_ENABLED": true,
+            "CORS_ORIGIN": true,
+            "DB_CLIENT": "pg",
+            "DB_CONNECTION_STRING": "${db_connectionString}/${db_dbName}",
+            "EMAIL_FROM": "no-reply@example.com",
+            "EMAIL_SMTP_HOST": "mailpit",
+            "EMAIL_SMTP_PORT": 1025,
+            "EMAIL_TEMPLATES_PATH": "./templates",
+            "EMAIL_TRANSPORT": "smtp",
+            "PUBLIC_URL": "${zeropsSubdomain}",
+            "RATE_LIMITER_ENABLED": true,
+            "RATE_LIMITER_STORE": "redis",
+            "REDIS": "${redis_connectionString}",
+            "STORAGE_LOCATIONS": "s3",
+            "STORAGE_S3_BUCKET": "${storage_bucketName}",
+            "STORAGE_S3_DRIVER": "s3",
+            "STORAGE_S3_ENDPOINT": "${storage_apiUrl}",
+            "STORAGE_S3_FORCE_PATH_STYLE": true,
+            "STORAGE_S3_KEY": "${storage_accessKeyId}",
+            "STORAGE_S3_REGION": "us-east-1",
+            "STORAGE_S3_SECRET": "${storage_secretAccessKey}"
+          },
+          "initCommands": [
+            "zsc execOnce bootstrap -- directus bootstrap",
+            "zsc execOnce schema -- directus schema apply --yes snapshot.yaml"
+          ],
+          "ports": [
+            {
+              "httpSupport": true,
+              "port": 8055
+            }
+          ],
+          "prepareCommands": [
+            "npm i -g directus"
+          ],
+          "start": "directus start"
+        },
+        "setup": "directus"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-directus-main",
+  "deploymentType": "git"
+}

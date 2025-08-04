@@ -1,0 +1,12 @@
+{
+  "patternId": "recipe-erlang",
+  "name": "Erlang",
+  "description": "Recipe Erlang application",
+  "framework": "Recipe Erlang",
+  "language": "Unknown",
+  "tags": [],
+  "services": null,
+  "zeropsYml": null,
+  "sourceRecipe": "recipe-erlang-main",
+  "deploymentType": "local"
+}

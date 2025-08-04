@@ -1,0 +1,46 @@
+{
+  "patternId": "recipe-analog-nodejs",
+  "name": "Analog Nodejs",
+  "description": "Recipe Analog Nodejs application",
+  "framework": "Recipe Analog Nodejs",
+  "language": "JavaScript",
+  "tags": [
+    "nodejs"
+  ],
+  "services": [
+    {
+      "enableSubdomainAccess": true,
+      "hostname": "app",
+      "type": "nodejs@20"
+    }
+  ],
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "base": "nodejs@20",
+          "buildCommands": [
+            "pnpm i",
+            "pnpm build"
+          ],
+          "deployFiles": [
+            "dist"
+          ]
+        },
+        "run": {
+          "base": "nodejs@20",
+          "ports": [
+            {
+              "httpSupport": true,
+              "port": 3000
+            }
+          ],
+          "start": "node dist/analog/server/index.mjs"
+        },
+        "setup": "app"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-analog-nodejs-main",
+  "deploymentType": "local"
+}

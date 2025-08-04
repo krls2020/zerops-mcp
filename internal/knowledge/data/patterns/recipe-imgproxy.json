@@ -1,0 +1,61 @@
+{
+  "patternId": "recipe-imgproxy",
+  "name": "Imgproxy",
+  "description": "Imgproxy service for Zerops",
+  "framework": "Recipe Imgproxy",
+  "language": "Unknown",
+  "tags": [],
+  "services": [
+    {
+      "buildFromGit": "https://github.com/zeropsio/recipe-imgproxy",
+      "enableSubdomainAccess": true,
+      "envSecrets": {
+        "IMGPROXY_ALLOWED_SOURCES": "${storage_apiUrl}/${storage_bucketName}/",
+        "IMGPROXY_KEY": "\u003c@generateRandomString(\u003c32\u003e) | toHex\u003e",
+        "IMGPROXY_SALT": "\u003c@generateRandomString(\u003c32\u003e) | toHex\u003e"
+      },
+      "hostname": "imgproxy",
+      "type": "22.04"
+    }
+  ],
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "base": "go@latest",
+          "buildCommands": [
+            "echo \"noop\""
+          ],
+          "deployFiles": [
+            "./proxy.conf",
+            "./setup.sh"
+          ],
+          "os": "ubuntu"
+        },
+        "run": {
+          "base": "ubuntu@latest",
+          "initCommands": [
+            "sudo sh setup.sh"
+          ],
+          "os": "ubuntu",
+          "ports": [
+            {
+              "httpSupport": true,
+              "port": 80
+            }
+          ],
+          "prepareCommands": [
+            "sudo apt-get -y update",
+            "sudo apt-get -y install nginx",
+            "sudo wget -O imgproxy.deb https://github.com/zeropsio/deb-packages/releases/download/imgproxy-v3.26.1/imgproxy.amd64.deb",
+            "sudo dpkg -i imgproxy.deb"
+          ],
+          "start": "imgproxy"
+        },
+        "setup": "imgproxy"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-imgproxy-main",
+  "deploymentType": "git"
+}

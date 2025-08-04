@@ -1,0 +1,68 @@
+{
+  "patternId": "recipe-contember-engine",
+  "name": "Contember Engine",
+  "description": "Contember Engine service for Zerops",
+  "framework": "Recipe Contember Engine",
+  "language": "Unknown",
+  "tags": [],
+  "services": [
+    {
+      "hostname": "engine",
+      "type": "nodejs@20"
+    }
+  ],
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "base": "nodejs@20",
+          "buildCommands": [
+            "rm -rf * \u0026\u0026 git clone -b v1.4.2 https://github.com/contember/engine.git .",
+            "yarn",
+            "yarn run build"
+          ],
+          "deployFiles": [
+            "./"
+          ]
+        },
+        "run": {
+          "base": "nodejs@20",
+          "envVariables": {
+            "CONTEMBER_API_URL": "http://localhost:4000",
+            "CONTEMBER_APPLICATION_WORKER": "all",
+            "CONTEMBER_INSTANCE": "http://localhost:4000",
+            "CONTEMBER_MONITORING_PORT": 4001,
+            "CONTEMBER_PACKAGE_JSON": "/var/www/packages/engine-server/package.json",
+            "CONTEMBER_PORT": 4000,
+            "DEFAULT_DB_HOST": "db",
+            "DEFAULT_DB_PASSWORD": "${db_password}",
+            "DEFAULT_DB_PORT": 5432,
+            "DEFAULT_DB_USER": "${db_user}",
+            "DEFAULT_S3_BUCKET": "${storage_bucketName}",
+            "DEFAULT_S3_ENDPOINT": "${storage_apiUrl}",
+            "DEFAULT_S3_KEY": "${storage_accessKeyId}",
+            "DEFAULT_S3_PREFIX": "data",
+            "DEFAULT_S3_PROVIDER": "minio",
+            "DEFAULT_S3_REGION": "us-east-1",
+            "DEFAULT_S3_SECRET": "${storage_secretAccessKey}",
+            "NODE_ENV": "production",
+            "TENANT_DB_NAME": "tenant",
+            "TENANT_MAILER_FROM": "contember@localhost",
+            "TENANT_MAILER_HOST": "mailpit",
+            "TENANT_MAILER_PORT": 1025
+          },
+          "ports": [
+            {
+              "httpSupport": true,
+              "port": 4000
+            }
+          ],
+          "start": "node ee/engine-server-ee/dist/src/start.js"
+        },
+        "setup": "engine"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-contember-engine-main",
+  "deploymentType": "git"
+}

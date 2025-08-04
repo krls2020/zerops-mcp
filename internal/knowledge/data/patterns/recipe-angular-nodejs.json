@@ -1,0 +1,44 @@
+{
+  "patternId": "recipe-angular-nodejs",
+  "name": "Angular Nodejs",
+  "description": "Angular application",
+  "framework": "Angular",
+  "language": "JavaScript",
+  "tags": [
+    "angular",
+    "nodejs"
+  ],
+  "services": null,
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "base": "nodejs@20",
+          "buildCommands": [
+            "pnpm i",
+            "pnpm build"
+          ],
+          "deployFiles": [
+            "public",
+            "node_modules",
+            "dist",
+            "package.json"
+          ]
+        },
+        "run": {
+          "base": "nodejs@20",
+          "ports": [
+            {
+              "httpSupport": true,
+              "port": 4000
+            }
+          ],
+          "start": "pnpm run serve:ssr:recipe-angular-nodejs"
+        },
+        "setup": "app"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-angular-nodejs-main",
+  "deploymentType": "local"
+}

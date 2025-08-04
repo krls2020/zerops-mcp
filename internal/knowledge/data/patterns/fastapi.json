@@ -1,0 +1,113 @@
+{
+  "bestPractices": [
+    "Use async/await throughout",
+    "Implement dependency injection",
+    "Use Pydantic for validation",
+    "Enable response compression",
+    "Use background tasks for heavy operations"
+  ],
+  "commonIssues": [
+    {
+      "issue": "Alembic migrations fail",
+      "solution": "Ensure alembic.ini and migrations folder are in deployFiles"
+    },
+    {
+      "issue": "Async context errors",
+      "solution": "Use asyncpg and aioredis for async operations"
+    }
+  ],
+  "description": "High-performance FastAPI with async PostgreSQL and Redis",
+  "exampleCode": {
+    "main": "from fastapi import FastAPI\nfrom app.database import engine\n\napp = FastAPI()\n\n@app.on_event('startup')\nasync def startup():\n    await engine.connect()\n\n@app.get('/health')\nasync def health():\n    return {'status': 'healthy'}",
+    "requirements": "fastapi==0.104.1\nuvicorn[standard]==0.24.0\nsqlalchemy==2.0.23\nasyncpg==0.29.0\naioredis==2.0.1\nalembic==1.12.1\npydantic==2.5.0"
+  },
+  "framework": "FastAPI",
+  "language": "Python",
+  "name": "FastAPI Async",
+  "patternId": "fastapi-async",
+  "services": [
+    {
+      "enableSubdomainAccess": true,
+      "envVariables": {
+        "API_DOCS_URL": "/docs",
+        "DATABASE_URL": "postgresql+asyncpg://${db_user}:${db_password}@${db_hostname}:${db_port}/${db_dbName}",
+        "ENVIRONMENT": "production",
+        "REDIS_URL": "redis://${cache_hostname}:${cache_port}/0"
+      },
+      "hostname": "api",
+      "maxContainers": 5,
+      "minContainers": 2,
+      "mode": "HA",
+      "ports": [
+        {
+          "httpSupport": true,
+          "port": 8000
+        }
+      ],
+      "type": "python@3.12"
+    },
+    {
+      "hostname": "db",
+      "mode": "HA",
+      "type": "postgresql@16"
+    },
+    {
+      "hostname": "cache",
+      "mode": "NON_HA",
+      "type": "valkey@7.2"
+    }
+  ],
+  "setupInstructions": [
+    "Set up Alembic for database migrations",
+    "Configure async database connections",
+    "Set up Redis for caching and sessions",
+    "Implement health check endpoint"
+  ],
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "addToRunPrepare": [
+            "requirements.txt"
+          ],
+          "base": "python@3.12",
+          "buildCommands": [
+            "python -m pip install --upgrade pip",
+            "python -m pip install -r requirements.txt"
+          ],
+          "deployFiles": [
+            "app",
+            "requirements.txt",
+            "alembic.ini",
+            "alembic"
+          ]
+        },
+        "run": {
+          "base": "python@3.12",
+          "healthCheck": {
+            "httpGet": {
+              "path": "/health",
+              "port": 8000
+            },
+            "initialDelaySeconds": 20,
+            "periodSeconds": 10
+          },
+          "initCommands": [
+            "alembic upgrade head"
+          ],
+          "ports": [
+            {
+              "httpSupport": true,
+              "port": 8000
+            }
+          ],
+          "prepareCommands": [
+            "python -m pip install -r requirements.txt"
+          ],
+          "start": "uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 4"
+        },
+        "setup": "api"
+      }
+    ]
+  }
+}

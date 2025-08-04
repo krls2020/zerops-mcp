@@ -1,0 +1,49 @@
+{
+  "patternId": "recipe-qwik-nodejs",
+  "name": "Qwik Nodejs",
+  "description": "Recipe Qwik Nodejs application",
+  "framework": "Recipe Qwik Nodejs",
+  "language": "JavaScript",
+  "tags": [
+    "nodejs"
+  ],
+  "services": [
+    {
+      "enableSubdomainAccess": true,
+      "hostname": "app",
+      "type": "nodejs@20"
+    }
+  ],
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "base": "nodejs@20",
+          "buildCommands": [
+            "pnpm i",
+            "pnpm run build"
+          ],
+          "deployFiles": [
+            "package.json",
+            "public",
+            "server",
+            "dist"
+          ]
+        },
+        "run": {
+          "base": "nodejs@20",
+          "ports": [
+            {
+              "httpSupport": true,
+              "port": 3000
+            }
+          ],
+          "start": "pnpm serve"
+        },
+        "setup": "app"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-qwik-nodejs-main",
+  "deploymentType": "local"
+}

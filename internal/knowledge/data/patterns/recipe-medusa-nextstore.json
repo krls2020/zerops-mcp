@@ -1,0 +1,68 @@
+{
+  "patternId": "recipe-medusa-nextstore",
+  "name": "Medusa Nextstore",
+  "description": "Medusa Nextstore service for Zerops",
+  "framework": "Recipe Medusa Nextstore",
+  "language": "Unknown",
+  "tags": [],
+  "services": null,
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "base": "nodejs@22",
+          "buildCommands": [
+            "yarn",
+            "yarn build"
+          ],
+          "cache": "node_modules",
+          "deployFiles": [
+            ".next",
+            "package.json",
+            "next.config.js",
+            "yarn.lock",
+            ".yarnrc.yml",
+            "node_modules",
+            "public",
+            "check-env-variables.js"
+          ],
+          "envVariables": {
+            "MEDUSA_BACKEND_URL": "${MEDUSA_INSTANCE_URL}",
+            "NEXT_PUBLIC_BASE_URL": "${NEXT_STORE_URL}",
+            "NEXT_PUBLIC_DEFAULT_REGION": "${RUNTIME_NEXT_PUBLIC_DEFAULT_REGION}",
+            "NEXT_PUBLIC_FEATURE_SEARCH_ENABLED": "${RUNTIME_NEXT_PUBLIC_FEATURE_SEARCH_ENABLED}",
+            "NEXT_PUBLIC_INDEX_NAME": "${RUNTIME_NEXT_PUBLIC_INDEX_NAME}",
+            "NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY": "${RUNTIME_NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY}",
+            "NEXT_PUBLIC_SEARCH_API_KEY": "${RUNTIME_NEXT_PUBLIC_SEARCH_API_KEY}",
+            "NEXT_PUBLIC_SEARCH_ENDPOINT": "${SEARCH_URL}",
+            "OBJECT_STORAGE_API_URL": "${RUNTIME_OBJECT_STORAGE_API_URL}"
+          }
+        },
+        "run": {
+          "base": "nodejs@22",
+          "envVariables": {
+            "MEDUSA_BACKEND_URL": "${MEDUSA_INSTANCE_URL}",
+            "NEXT_PUBLIC_BASE_URL": "${NEXT_STORE_URL}",
+            "NEXT_PUBLIC_DEFAULT_REGION": "de",
+            "NEXT_PUBLIC_FEATURE_SEARCH_ENABLED": true,
+            "NEXT_PUBLIC_INDEX_NAME": "products",
+            "NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY": "${medusa_CHANNEL_PUBLISHABLE_KEY}",
+            "NEXT_PUBLIC_SEARCH_API_KEY": "${search_defaultSearchKey}",
+            "NEXT_PUBLIC_SEARCH_ENDPOINT": "${SEARCH_URL}",
+            "OBJECT_STORAGE_API_URL": "${storage_apiUrl}"
+          },
+          "ports": [
+            {
+              "httpSupport": true,
+              "port": 8000
+            }
+          ],
+          "start": "yarn start"
+        },
+        "setup": "nextstore"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-medusa-nextstore-main",
+  "deploymentType": "git"
+}

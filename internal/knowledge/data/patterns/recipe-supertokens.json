@@ -1,0 +1,205 @@
+{
+  "patternId": "recipe-supertokens",
+  "name": "Supertokens",
+  "description": "Recipe Supertokens application",
+  "framework": "Recipe Supertokens",
+  "language": "Unknown",
+  "tags": [],
+  "services": [
+    {
+      "hostname": "db",
+      "mode": "NON_HA",
+      "priority": 100,
+      "type": "postgresql@16"
+    },
+    {
+      "enableSubdomainAccess": true,
+      "hostname": "mailpit",
+      "priority": 90,
+      "type": "go@1.22"
+    },
+    {
+      "enableSubdomainAccess": true,
+      "envSecrets": {
+        "API_KEYS": "\u003c@generateRandomString(\u003c32\u003e) | toHex\u003e"
+      },
+      "hostname": "supertokens",
+      "priority": 90,
+      "type": "ubuntu@22.04",
+      "verticalAutoscaling": {
+        "minRam": 0.5,
+        "startCpuCoreCount": 3
+      }
+    },
+    {
+      "enableSubdomainAccess": true,
+      "envSecrets": {
+        "API_DOMAIN": "${PROJECT_BACKEND_URL}",
+        "APP_NAME": "zerops-recipe",
+        "SMTP_FROM_EMAIL": "no-reply@example.com",
+        "SMTP_FROM_NAME": "zerops",
+        "SMTP_HOST": "${mailpit_hostname}",
+        "SMTP_PORT": "1025",
+        "SUPERTOKENS_ADMIN_EMAIL": "admin@example.com",
+        "SUPERTOKENS_ADMIN_PASSWORD": "\u003c@generateRandomString(\u003c12\u003e) | toHex\u003exY1_",
+        "SUPERTOKENS_API_KEY": "${supertokens_API_KEYS}",
+        "SUPERTOKENS_CONNECTION_URI": "${PROJECT_INSTANCE_URL}",
+        "SUPERTOKENS_INSTANCE": "${PROJECT_INSTANCE_URL}",
+        "SUPERTOKENS_SEED_USER_EMAIL": "user@example.com",
+        "WEBSITE_DOMAIN": "${PROJECT_FRONTEND_URL}"
+      },
+      "hostname": "nodejsbackend",
+      "type": "nodejs@22"
+    },
+    {
+      "enableSubdomainAccess": true,
+      "envSecrets": {
+        "API_DOMAIN": "${PROJECT_BACKEND_URL}",
+        "APP_NAME": "${nodejsbackend_APP_NAME}",
+        "WEBSITE_DOMAIN": "${PROJECT_FRONTEND_URL}"
+      },
+      "hostname": "angularfrontend",
+      "type": "static"
+    }
+  ],
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "buildCommands": [
+            "echo \"noop\""
+          ],
+          "deployFiles": "./supertokens-core/~"
+        },
+        "deploy": {
+          "readinessCheck": {
+            "httpGet": {
+              "path": "/hello",
+              "port": 3567
+            }
+          }
+        },
+        "run": {
+          "base": "ubuntu@22.04",
+          "envVariables": {
+            "POSTGRESQL_DATABASE_NAME": "${db_dbName}",
+            "POSTGRESQL_HOST": "${db_hostname}",
+            "POSTGRESQL_PASSWORD": "${db_password}",
+            "POSTGRESQL_PORT": "${db_port}",
+            "POSTGRESQL_USER": "${db_user}",
+            "SUPERTOKENS_PORT": 3567
+          },
+          "healthCheck": {
+            "httpGet": {
+              "path": "/hello",
+              "port": 3567
+            }
+          },
+          "initCommands": [
+            "sh setup-envs.sh"
+          ],
+          "ports": [
+            {
+              "httpSupport": true,
+              "port": 3567
+            }
+          ],
+          "prepareCommands": [
+            "curl 'https://api.supertokens.com/0/user/app/download?pluginName=postgresql\u0026os=linux\u0026core=9.3.0\u0026api-version=0' --output supertokens.zip",
+            "unzip supertokens.zip",
+            "cd supertokens \u0026\u0026 sudo sh install",
+            "rm -rf supertokens",
+            "rm supertokens.zip"
+          ],
+          "start": "supertokens start --foreground --with-config=\"/tmp/supertokens-config.yml\""
+        },
+        "setup": "supertokens"
+      },
+      {
+        "build": {
+          "base": "nodejs@22",
+          "buildCommands": [
+            "cd supertokens-nodejs-backend\nnpm i\n"
+          ],
+          "deployFiles": "./supertokens-nodejs-backend/~"
+        },
+        "deploy": {
+          "readinessCheck": {
+            "httpGet": {
+              "path": "/health",
+              "port": 3001
+            }
+          }
+        },
+        "run": {
+          "base": "nodejs@22",
+          "healthCheck": {
+            "httpGet": {
+              "path": "/health",
+              "port": 3001
+            }
+          },
+          "initCommands": [
+            "zsc execOnce INIT_ADMIN_USER -- sh create-admin-user.sh",
+            "zsc execOnce INIT_SEED_USER -- sh create-seed-user.sh"
+          ],
+          "ports": [
+            {
+              "httpSupport": true,
+              "port": 3001
+            }
+          ],
+          "start": "npm start"
+        },
+        "setup": "nodejsbackend"
+      },
+      {
+        "build": {
+          "base": "nodejs@20",
+          "buildCommands": [
+            "cd supertokens-angular-frontend\nnpm ci\nnpm run build\n"
+          ],
+          "deployFiles": [
+            "./supertokens-angular-frontend/dist/angular-prebuilt/browser/~"
+          ]
+        },
+        "deploy": {
+          "readinessCheck": {
+            "httpGet": {
+              "path": "/",
+              "port": 80
+            }
+          }
+        },
+        "run": {
+          "base": "static",
+          "envReplace": {
+            "delimiter": [
+              "$$"
+            ],
+            "target": [
+              "./"
+            ]
+          },
+          "healthCheck": {
+            "httpGet": {
+              "path": "/",
+              "port": 80
+            }
+          },
+          "routing": {
+            "redirects": [
+              {
+                "from": "/*",
+                "to": "/index.html"
+              }
+            ]
+          }
+        },
+        "setup": "angularfrontend"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-supertokens-main",
+  "deploymentType": "local"
+}

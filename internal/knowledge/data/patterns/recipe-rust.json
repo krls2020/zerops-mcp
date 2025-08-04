@@ -1,0 +1,64 @@
+{
+  "patternId": "recipe-rust",
+  "name": "Rust",
+  "description": "Recipe Rust application",
+  "framework": "Recipe Rust",
+  "language": "Rust",
+  "tags": [
+    "rust"
+  ],
+  "services": [
+    {
+      "enableSubdomainAccess": true,
+      "hostname": "api",
+      "type": "rust@1"
+    },
+    {
+      "hostname": "db",
+      "mode": "NON_HA",
+      "priority": 1,
+      "type": "postgresql@16"
+    }
+  ],
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "base": "rust@1.78",
+          "buildCommands": [
+            "cargo build --release"
+          ],
+          "deployFiles": [
+            "./target/release/~/rust"
+          ]
+        },
+        "run": {
+          "base": "rust@1.78",
+          "envVariables": {
+            "DB_HOST": "${db_hostname}",
+            "DB_NAME": "db",
+            "DB_PASS": "${db_password}",
+            "DB_PORT": "${db_port}",
+            "DB_USER": "${db_user}"
+          },
+          "healthCheck": {
+            "httpGet": {
+              "path": "/status",
+              "port": 8080
+            }
+          },
+          "ports": [
+            {
+              "httpSupport": true,
+              "port": 8080
+            }
+          ],
+          "start": "./rust"
+        },
+        "setup": "api"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-rust-main",
+  "deploymentType": "local"
+}

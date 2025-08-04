@@ -1,0 +1,183 @@
+{
+  "patternId": "recipe-airflow",
+  "name": "Airflow",
+  "description": "Airflow service for Zerops",
+  "framework": "Recipe Airflow",
+  "language": "Unknown",
+  "tags": [],
+  "services": [
+    {
+      "hostname": "db",
+      "mode": "HA",
+      "priority": 10,
+      "type": "postgresql@16"
+    },
+    {
+      "hostname": "redis",
+      "mode": "HA",
+      "priority": 10,
+      "type": "keydb@6"
+    },
+    {
+      "hostname": "files",
+      "mode": "NON_HA",
+      "priority": 10,
+      "type": "shared-storage"
+    },
+    {
+      "buildFromGit": "https://github.com/zeropsio/recipe-airflow",
+      "hostname": "airflowdags",
+      "maxContainers": 1,
+      "mount": [
+        "files"
+      ],
+      "priority": 5,
+      "type": "python@3.12"
+    },
+    {
+      "buildFromGit": "https://github.com/zeropsio/recipe-airflow",
+      "enableSubdomainAccess": true,
+      "hostname": "airflowui",
+      "maxContainers": 1,
+      "mount": [
+        "files"
+      ],
+      "type": "python@3.12",
+      "verticalAutoscaling": {
+        "minRam": 1
+      }
+    },
+    {
+      "buildFromGit": "https://github.com/zeropsio/recipe-airflow",
+      "hostname": "airflowscheduler",
+      "maxContainers": 1,
+      "mount": [
+        "files"
+      ],
+      "type": "python@3.12",
+      "verticalAutoscaling": {
+        "minRam": 0.5
+      }
+    },
+    {
+      "buildFromGit": "https://github.com/zeropsio/recipe-airflow",
+      "hostname": "airflowworkers",
+      "maxContainers": 3,
+      "minContainers": 3,
+      "mount": [
+        "files"
+      ],
+      "type": "python@3.12",
+      "verticalAutoscaling": {
+        "minRam": 2
+      }
+    }
+  ],
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "deployFiles": [
+            "wait-mount.sh"
+          ]
+        },
+        "run": {
+          "base": "python@3.12",
+          "envVariables": {
+            "AIRFLOW_HOME": "/var/www/airflow",
+            "AIRFLOW__CELERY__BROKER_URL": "redis://redis:6379/0",
+            "AIRFLOW__CELERY__RESULT_BACKEND": "db+postgresql://${db_user}:${db_password}@db/db",
+            "AIRFLOW__CORE__DAGS_FOLDER": "${SHARED_DAGS_FOLDER}",
+            "AIRFLOW__CORE__EXECUTOR": "CeleryExecutor",
+            "AIRFLOW__CORE__LOAD_EXAMPLES": "False",
+            "AIRFLOW__DATABASE__SQL_ALCHEMY_CONN": "postgresql+psycopg2://${db_user}:${db_password}@db/db",
+            "SHARED_DAGS_FOLDER": "/mnt/files/dags"
+          },
+          "initCommands": [
+            "./wait-mount.sh"
+          ],
+          "os": "ubuntu",
+          "prepareCommands": [
+            "cd /var/www\nuv venv\nsource .venv/bin/activate\nuv pip install --upgrade pip\nuv pip install \"apache-airflow[celery,postgres,redis]==2.10.5\" --constraint \"https://raw.githubusercontent.com/apache/airflow/constraints-2.10.5/constraints-3.12.txt\"\n"
+          ]
+        },
+        "setup": "airflow-production-base"
+      },
+      {
+        "build": {
+          "deployFiles": [
+            "wait-mount.sh",
+            "dags"
+          ]
+        },
+        "extends": "airflow-production-base",
+        "run": {
+          "initCommands": [
+            "source .venv/bin/activate\nzsc execOnce migrate -- airflow db migrate\nzsc execOnce create-user -- airflow users create --username admin --firstname Data --lastname Enjoyer --role Admin --email data.enjoyer@email.com --password ${ADMIN_PASSWORD}\n",
+            "./wait-mount.sh",
+            "sudo mkdir -p $SHARED_DAGS_FOLDER \u0026\u0026 sudo chown zerops:zerops -R $SHARED_DAGS_FOLDER",
+            "rsync -avzh --delete ./dags/ $SHARED_DAGS_FOLDER"
+          ],
+          "start": "zsc noop --silent"
+        },
+        "setup": "airflowdags"
+      },
+      {
+        "extends": "airflow-production-base",
+        "run": {
+          "ports": [
+            {
+              "httpSupport": true,
+              "port": 8080
+            }
+          ],
+          "start": "source .venv/bin/activate\nairflow webserver\n"
+        },
+        "setup": "airflowui"
+      },
+      {
+        "extends": "airflow-production-base",
+        "run": {
+          "start": "source .venv/bin/activate\nairflow scheduler\n"
+        },
+        "setup": "airflowscheduler"
+      },
+      {
+        "extends": "airflow-production-base",
+        "run": {
+          "start": "source .venv/bin/activate\nairflow celery worker\n"
+        },
+        "setup": "airflowworkers"
+      },
+      {
+        "build": {
+          "deployFiles": [
+            "dags"
+          ]
+        },
+        "run": {
+          "base": "python@3.12",
+          "envVariables": {
+            "AIRFLOW_HOME": "/var/www/airflow",
+            "AIRFLOW__CORE__DAGS_FOLDER": "/var/www/dags",
+            "AIRFLOW__CORE__LOAD_EXAMPLES": "False"
+          },
+          "os": "ubuntu",
+          "ports": [
+            {
+              "httpSupport": true,
+              "port": 8080
+            }
+          ],
+          "prepareCommands": [
+            "cd /var/www\nuv venv\nsource .venv/bin/activate\nuv pip install --upgrade pip\nuv pip install \"apache-airflow==2.10.5\" --constraint \"https://raw.githubusercontent.com/apache/airflow/constraints-2.10.5/constraints-3.12.txt\"\n"
+          ],
+          "start": "source .venv/bin/activate\nairflow standalone"
+        },
+        "setup": "airflowstandalone"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-airflow-main",
+  "deploymentType": "git"
+}

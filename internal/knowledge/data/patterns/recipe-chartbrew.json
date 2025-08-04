@@ -1,0 +1,100 @@
+{
+  "patternId": "recipe-chartbrew",
+  "name": "Chartbrew",
+  "description": "Chartbrew service for Zerops",
+  "framework": "Recipe Chartbrew",
+  "language": "Unknown",
+  "tags": [],
+  "services": [
+    {
+      "hostname": "db",
+      "mode": "NON_HA",
+      "priority": 1,
+      "type": "postgresql@17",
+      "verticalAutoscaling": {
+        "cpuMode": "SHARED",
+        "maxRam": 12,
+        "minRam": 1
+      }
+    },
+    {
+      "hostname": "valkey",
+      "mode": "NON_HA",
+      "priority": 1,
+      "type": "valkey@7.2",
+      "verticalAutoscaling": {
+        "cpuMode": "SHARED",
+        "maxRam": 12,
+        "minRam": 1
+      }
+    },
+    {
+      "buildFromGit": "https://github.com/zeropsio/recipe-chartbrew@main",
+      "enableSubdomainAccess": true,
+      "hostname": "api",
+      "maxContainers": 1,
+      "type": "nodejs@22",
+      "verticalAutoscaling": {
+        "cpuMode": "SHARED",
+        "maxRam": 12,
+        "minRam": 4
+      }
+    }
+  ],
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "base": "nodejs@22",
+          "buildCommands": [
+            "npm i"
+          ],
+          "deployFiles": [
+            "./app/index.js",
+            "node_modules",
+            "package.json"
+          ],
+          "envVariables": {
+            "CB_DB_DIALECT": "${RUNTIME_CB_DB_DIALECT}",
+            "CB_DB_HOST": "${RUNTIME_CB_DB_HOST}",
+            "CB_DB_NAME": "${RUNTIME_CB_DB_NAME}",
+            "CB_DB_PASSWORD": "${RUNTIME_CB_DB_PASSWORD}",
+            "CB_DB_PORT": "${RUNTIME_CB_DB_PORT}",
+            "CB_DB_USERNAME": "${RUNTIME_CB_DB_USERNAME}",
+            "CB_REDIS_HOST": "${RUNTIME_CB_REDIS_HOST}",
+            "CB_REDIS_PORT": "${RUNTIME_CB_REDIS_PORT}"
+          },
+          "os": "ubuntu"
+        },
+        "run": {
+          "base": "nodejs@22",
+          "envVariables": {
+            "CB_DB_DIALECT": "postgres",
+            "CB_DB_HOST": "${db_hostname}",
+            "CB_DB_NAME": "${db_dbName}",
+            "CB_DB_PASSWORD": "${db_password}",
+            "CB_DB_PORT": "${db_port}",
+            "CB_DB_USERNAME": "${db_user}",
+            "CB_REDIS_HOST": "${valkey_hostname}",
+            "CB_REDIS_PORT": "${valkey_port}"
+          },
+          "os": "ubuntu",
+          "ports": [
+            {
+              "httpSupport": true,
+              "port": 3000
+            },
+            {
+              "httpSupport": true,
+              "port": 4019
+            }
+          ],
+          "start": "npm start"
+        },
+        "setup": "api"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-chartbrew-main",
+  "deploymentType": "git"
+}

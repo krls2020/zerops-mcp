@@ -1,0 +1,49 @@
+{
+  "patternId": "recipe-solidjs-nodejs",
+  "name": "Solidjs Nodejs",
+  "description": "Recipe Solidjs Nodejs application",
+  "framework": "Recipe Solidjs Nodejs",
+  "language": "JavaScript",
+  "tags": [
+    "nodejs"
+  ],
+  "services": [
+    {
+      "enableSubdomainAccess": true,
+      "hostname": "app",
+      "type": "nodejs@20"
+    }
+  ],
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "base": "nodejs@20",
+          "buildCommands": [
+            "pnpm i",
+            "pnpm build"
+          ],
+          "deployFiles": [
+            ".output",
+            "public",
+            "node_modules",
+            "package.json"
+          ]
+        },
+        "run": {
+          "base": "nodejs@20",
+          "ports": [
+            {
+              "httpSupport": true,
+              "port": 3000
+            }
+          ],
+          "start": "pnpm start"
+        },
+        "setup": "app"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-solidjs-nodejs-main",
+  "deploymentType": "local"
+}

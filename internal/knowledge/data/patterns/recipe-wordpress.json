@@ -1,0 +1,68 @@
+{
+  "patternId": "recipe-wordpress",
+  "name": "Wordpress",
+  "description": "WordPress application",
+  "framework": "WordPress",
+  "language": "Unknown",
+  "tags": [
+    "wordpress"
+  ],
+  "services": null,
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "base": "php@8.3",
+          "buildCommands": [
+            "composer install --no-dev --optimize-autoloader --no-interaction"
+          ],
+          "deployFiles": [
+            "./"
+          ],
+          "envVariables": {
+            "COMPOSER_ALLOW_SUPERUSER": 1
+          },
+          "os": "ubuntu",
+          "prepareCommands": [
+            "composer self-update"
+          ]
+        },
+        "run": {
+          "base": "php-nginx@8.3",
+          "envVariables": {
+            "HTTP_X_FORWARDED_PROTO": "https",
+            "WORDPRESS_DB_HOST": "${db_hostname}",
+            "WORDPRESS_DB_NAME": "${hostname}",
+            "WORDPRESS_DB_PASSWORD": "${db_password}",
+            "WORDPRESS_DB_USER": "${db_user}",
+            "WORDPRESS_REDIS_USER_SESSION_HOST": "${redis_hostname}",
+            "WORDPRESS_STORAGE_ACCESS_KEY": "${storage_secretAccessKey}",
+            "WORDPRESS_STORAGE_BUCKET": "${storage_bucketName}/${hostname}",
+            "WORDPRESS_STORAGE_KEY_ID": "${storage_accessKeyId}",
+            "WORDPRESS_STORAGE_URL": "${storage_apiUrl}",
+            "WORDPRESS_TABLE_PREFIX": "wp_"
+          },
+          "initCommands": [
+            "sudo -E -u zerops -- zsc execOnce initialize -- sh ./utils/initialize.sh",
+            "sudo -E -u zerops -- zsc execOnce ${appVersionId} -- sh ./utils/upgrade.sh"
+          ],
+          "os": "ubuntu",
+          "prepareCommands": [
+            "apt-get update \u0026\u0026 apt-get install -y mariadb-client",
+            "curl -sS https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar -o wp-cli.phar",
+            "chmod +x wp-cli.phar",
+            "sudo mv wp-cli.phar /usr/local/bin/wp"
+          ],
+          "siteConfigPath": "site.conf.tmpl"
+        },
+        "setup": "base"
+      },
+      {
+        "extends": "base",
+        "setup": "app"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-wordpress-main",
+  "deploymentType": "local"
+}

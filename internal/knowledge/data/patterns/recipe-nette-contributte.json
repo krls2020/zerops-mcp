@@ -1,0 +1,93 @@
+{
+  "patternId": "recipe-nette-contributte",
+  "name": "Nette Contributte",
+  "description": "Recipe Nette Contributte application",
+  "framework": "Recipe Nette Contributte",
+  "language": "Unknown",
+  "tags": [],
+  "services": [
+    {
+      "enableSubdomainAccess": true,
+      "envSecrets": {
+        "ADMIN_PASSWORD": "\u003c@generateRandomString(\u003c24\u003e)\u003e",
+        "NETTE_DEBUG": 1,
+        "NETTE_ENV": "dev"
+      },
+      "hostname": "app",
+      "type": "php-apache@8.3",
+      "verticalAutoscaling": {
+        "minFreeRamGB": 0.125,
+        "minRam": 0.25
+      }
+    },
+    {
+      "hostname": "db",
+      "mode": "NON_HA",
+      "priority": 10,
+      "type": "postgresql@16"
+    },
+    {
+      "hostname": "redis",
+      "mode": "NON_HA",
+      "priority": 10,
+      "type": "keydb@6"
+    },
+    {
+      "enableSubdomainAccess": true,
+      "hostname": "adminer",
+      "maxContainers": 1,
+      "type": "php-apache@8.3"
+    },
+    {
+      "enableSubdomainAccess": true,
+      "hostname": "mailpit",
+      "maxContainers": 1,
+      "type": "go@1"
+    }
+  ],
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "base": "php@8.3",
+          "buildCommands": [
+            "composer install --optimize-autoloader"
+          ],
+          "cache": [
+            "vendor",
+            "composer.lock"
+          ],
+          "deployFiles": "./",
+          "os": "alpine"
+        },
+        "deploy": {
+          "readinessCheck": {
+            "httpGet": {
+              "path": "/",
+              "port": 80
+            }
+          }
+        },
+        "run": {
+          "base": "php-apache@8.3",
+          "documentRoot": "www/",
+          "healthCheck": {
+            "httpGet": {
+              "path": "/",
+              "port": 80
+            }
+          },
+          "initCommands": [
+            "zsc execOnce ${appVersionId}-migration -- php /var/www/bin/console migrations:migrate --no-interaction --allow-no-migration",
+            "zsc execOnce ${appVersionId}-fixtures -- php /var/www/bin/console doctrine:fixtures:load --no-interaction",
+            "chown -R zerops:zerops /var/www/var/tmp/"
+          ],
+          "os": "alpine"
+        },
+        "setup": "app"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-nette-contributte-main",
+  "deploymentType": "local"
+}

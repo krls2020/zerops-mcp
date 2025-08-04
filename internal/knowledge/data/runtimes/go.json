@@ -1,0 +1,16 @@
+{
+  "runtime": "go",
+  "displayName": "Go",
+  "versions": {
+    "available": ["1.22"],
+    "default": "1.22"
+  },
+  "buildConfig": {
+    "buildCommands": ["go mod download", "go build -o app"],
+    "deployFiles": ["app"]
+  },
+  "runConfig": {
+    "startCommand": "./app",
+    "port": 8080
+  }
+}

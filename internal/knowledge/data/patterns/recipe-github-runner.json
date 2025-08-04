@@ -1,0 +1,46 @@
+{
+  "patternId": "recipe-github-runner",
+  "name": "Github Runner",
+  "description": "Github Runner service for Zerops",
+  "framework": "Recipe Github Runner",
+  "language": "Unknown",
+  "tags": [],
+  "services": [
+    {
+      "buildFromGit": "https://github.com/zeropsio/recipe-github-runner",
+      "envSecrets": {
+        "GITHUB_RUNNER_TOKEN": "xxx",
+        "RUNNER_REPO": "https://github.com/foo/bar"
+      },
+      "hostname": "myrunner"
+    }
+  ],
+  "zeropsYml": {
+    "zerops": [
+      {
+        "run": {
+          "base": "nodejs@22",
+          "envVariables": {
+            "RUNNER_WORKDIR": "/var/www/runner/_work"
+          },
+          "initCommands": [
+            "cd /var/www/runner \u0026\u0026 ./config.sh --url ${RUNNER_REPO} \\\n  --token ${GITHUB_RUNNER_TOKEN} \\\n  --name \"zerops-runner-${hostname}\" \\\n  --labels self-hosted,linux,x64,zerops,node22 \\\n  --unattended \\\n  --replace\n"
+          ],
+          "os": "ubuntu",
+          "prepareCommands": [
+            "sudo apt-get update \u0026\u0026 sudo apt-get install -y jq",
+            "mkdir -p /var/www/runner",
+            "cd /home/zerops",
+            "curl -o actions-runner-linux-x64-2.326.0.tar.gz -L https://github.com/actions/runner/releases/download/v2.326.0/actions-runner-linux-x64-2.326.0.tar.gz",
+            "tar xzf ./actions-runner-linux-x64-2.326.0.tar.gz -C /var/www/runner",
+            "rm actions-runner-linux-x64-2.326.0.tar.gz"
+          ],
+          "start": "/var/www/runner/run.sh"
+        },
+        "setup": "runner"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-github-runner-main",
+  "deploymentType": "git"
+}

@@ -1,0 +1,14 @@
+{
+  "patternId": "zerops-go",
+  "name": "Zerops Go",
+  "description": "Zerops Go application",
+  "framework": "Zerops Go",
+  "language": "Go",
+  "tags": [
+    "go"
+  ],
+  "services": null,
+  "zeropsYml": null,
+  "sourceRecipe": "zerops-go-main",
+  "deploymentType": "local"
+}

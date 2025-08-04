@@ -1,0 +1,31 @@
+{
+  "patternId": "recipe-docker",
+  "name": "Docker",
+  "description": "Recipe Docker application",
+  "framework": "Recipe Docker",
+  "language": "Unknown",
+  "tags": [],
+  "services": null,
+  "zeropsYml": {
+    "zerops": [
+      {
+        "run": {
+          "base": "docker@26.1",
+          "ports": [
+            {
+              "httpSupport": true,
+              "port": 8000
+            }
+          ],
+          "prepareCommands": [
+            "docker image pull crccheck/hello-world"
+          ],
+          "start": "docker run --network=host crccheck/hello-world"
+        },
+        "setup": "app"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-docker-main",
+  "deploymentType": "local"
+}

@@ -1,0 +1,119 @@
+{
+  "bestPractices": [
+    "Use php-apache@8.3 for Laravel",
+    "Cache all configurations in build",
+    "Use Valkey for sessions and cache",
+    "Enable OPcache for production"
+  ],
+  "commonIssues": [
+    {
+      "issue": "Migration fails",
+      "solution": "Add --isolated flag to migration command"
+    },
+    {
+      "issue": "Storage not writable",
+      "solution": "Storage directory is automatically writable in Zerops"
+    },
+    {
+      "issue": "Queue not processing",
+      "solution": "Add a separate queue worker service or use initCommands"
+    }
+  ],
+  "description": "Production-ready Laravel setup with PostgreSQL and Valkey cache",
+  "framework": "Laravel",
+  "language": "PHP",
+  "name": "Laravel Full Stack",
+  "patternId": "laravel-full-stack",
+  "services": [
+    {
+      "enableSubdomainAccess": true,
+      "envVariables": {
+        "APP_DEBUG": "false",
+        "APP_ENV": "production",
+        "CACHE_DRIVER": "redis",
+        "DB_CONNECTION": "pgsql",
+        "DB_DATABASE": "${db_dbName}",
+        "DB_HOST": "${db_hostname}",
+        "DB_PASSWORD": "${db_password}",
+        "DB_PORT": "${db_port}",
+        "DB_USERNAME": "${db_user}",
+        "QUEUE_CONNECTION": "redis",
+        "REDIS_HOST": "${cache_hostname}",
+        "REDIS_PORT": "${cache_port}",
+        "SESSION_DRIVER": "redis"
+      },
+      "hostname": "app",
+      "maxContainers": 5,
+      "minContainers": 2,
+      "mode": "HA",
+      "type": "php-apache@8.3"
+    },
+    {
+      "hostname": "db",
+      "mode": "HA",
+      "type": "postgresql@16"
+    },
+    {
+      "hostname": "cache",
+      "mode": "NON_HA",
+      "type": "valkey@7.2"
+    }
+  ],
+  "setupInstructions": [
+    "Create .env.production with APP_KEY",
+    "Set up database migrations",
+    "Configure storage permissions",
+    "Set up queue workers if needed"
+  ],
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "base": "php@8.3",
+          "buildCommands": [
+            "composer install --optimize-autoloader --no-dev",
+            "npm ci",
+            "npm run build",
+            "php artisan config:cache",
+            "php artisan route:cache",
+            "php artisan view:cache"
+          ],
+          "cache": [
+            "vendor",
+            "node_modules"
+          ],
+          "deployFiles": [
+            "app",
+            "bootstrap",
+            "config",
+            "database",
+            "public",
+            "resources",
+            "routes",
+            "storage",
+            "vendor",
+            "artisan",
+            "composer.json",
+            ".env.production"
+          ]
+        },
+        "run": {
+          "base": "php-apache@8.3",
+          "documentRoot": "public",
+          "initCommands": [
+            "php artisan migrate --force --isolated",
+            "php artisan storage:link",
+            "php artisan queue:restart"
+          ],
+          "ports": [
+            {
+              "httpSupport": true,
+              "port": 80
+            }
+          ]
+        },
+        "setup": "app"
+      }
+    ]
+  }
+}

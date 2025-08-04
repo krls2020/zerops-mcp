@@ -1,0 +1,96 @@
+{
+  "patternId": "recipe-tegola",
+  "name": "Tegola",
+  "description": "Recipe Tegola application",
+  "framework": "Recipe Tegola",
+  "language": "Go",
+  "tags": [
+    "go"
+  ],
+  "services": [
+    {
+      "hostname": "redis",
+      "mode": "NON_HA",
+      "priority": 2,
+      "type": "keydb@6"
+    },
+    {
+      "hostname": "postgis",
+      "mode": "NON_HA",
+      "priority": 2,
+      "type": "postgresql@16"
+    },
+    {
+      "enableSubdomainAccess": true,
+      "hostname": "tegola",
+      "maxContainers": 1,
+      "priority": 1,
+      "type": "go@1.22"
+    }
+  ],
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "buildCommands": [
+            "wget https://github.com/go-spatial/tegola/releases/download/${TEGOLA_VERSION}/tegola_linux_amd64.zip",
+            "unzip tegola_linux_amd64.zip",
+            "chmod +x tegola",
+            "tar -xzf data/bonn_example.tar.gz -C data \u0026\u0026 rm data/bonn_example.tar.gz"
+          ],
+          "deployFiles": [
+            "tegola",
+            "data/",
+            "config/"
+          ],
+          "envVariables": {
+            "TEGOLA_VERSION": "v0.20.0"
+          }
+        },
+        "deploy": {
+          "readinessCheck": {
+            "httpGet": {
+              "path": "/",
+              "port": 8080
+            }
+          }
+        },
+        "run": {
+          "base": "ubuntu@24.04",
+          "envVariables": {
+            "DB_HOST": "$postgis_hostname",
+            "DB_NAME": "bonn",
+            "DB_PASSWORD": "$postgis_password",
+            "DB_PORT": "$postgis_port",
+            "DB_USER": "$postgis_user",
+            "LOG_LEVEL": "INFO",
+            "PGPASSWORD": "$postgis_superUserPassword",
+            "PGUSER": "$postgis_superUser",
+            "REDIS_HOST": "redis:6379",
+            "TEGOLA_POSTGIS_SSL": "disable",
+            "TEGOLA_REDIS_SSL": false,
+            "TEGOLA_SQL_DEBUG": "LAYER_SQL"
+          },
+          "initCommands": [
+            "zsc execOnce \"only-once\" -- ./data/init.sh"
+          ],
+          "os": "ubuntu",
+          "ports": [
+            {
+              "httpSupport": true,
+              "port": 8080
+            }
+          ],
+          "prepareCommands": [
+            "sudo apt-get update",
+            "sudo apt-get install -y postgresql-client"
+          ],
+          "start": "./tegola serve --config=config/config-mvt-postgis.toml --log-level $LOG_LEVEL"
+        },
+        "setup": "tegola"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-tegola-main",
+  "deploymentType": "local"
+}

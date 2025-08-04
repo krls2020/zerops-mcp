@@ -1,0 +1,103 @@
+{
+  "patternId": "recipe-payload",
+  "name": "Payload",
+  "description": "Payload service for Zerops",
+  "framework": "Recipe Payload",
+  "language": "Unknown",
+  "tags": [],
+  "services": [
+    {
+      "hostname": "db",
+      "mode": "NON_HA",
+      "priority": 1,
+      "type": "postgresql@16"
+    },
+    {
+      "hostname": "storage",
+      "objectStoragePolicy": "private",
+      "objectStorageSize": 1,
+      "priority": 1,
+      "type": "object-storage"
+    },
+    {
+      "buildFromGit": "https://github.com/zeropsio/recipe-mailpit@main",
+      "enableSubdomainAccess": true,
+      "hostname": "mailpit",
+      "maxContainers": 1,
+      "priority": 1,
+      "type": "go@1"
+    },
+    {
+      "buildFromGit": "https://github.com/zeropsio/recipe-payload@main",
+      "enableSubdomainAccess": true,
+      "envSecrets": {
+        "PAYLOAD_SECRET": "\u003c@generateRandomString(\u003c24\u003e)\u003e"
+      },
+      "hostname": "api",
+      "maxContainers": 1,
+      "type": "nodejs@20",
+      "verticalAutoscaling": {
+        "minRam": 1
+      }
+    }
+  ],
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "base": "nodejs@20",
+          "buildCommands": [
+            "pnpm i",
+            "pnpm exec next telemetry disable",
+            "zsc test tcp -6 db:5432 --timeout 30s",
+            "zsc test tcp -6 mailpit:1025 --timeout 30s",
+            "pnpm payload generate:importmap",
+            "pnpm payload migrate:status",
+            "pnpm payload migrate",
+            "pnpm build"
+          ],
+          "deployFiles": [
+            "next.config.js",
+            "redirects.js",
+            "node_modules",
+            "package.json",
+            "public",
+            ".next"
+          ],
+          "envVariables": {
+            "DATABASE_URI": "${RUNTIME_DATABASE_URI}",
+            "NEXT_PUBLIC_SERVER_URL": "${RUNTIME_zeropsSubdomain}",
+            "PAYLOAD_SECRET": "${RUNTIME_PAYLOAD_SECRET}",
+            "S3_ACCESS_KEY_ID": "${RUNTIME_S3_ACCESS_KEY_ID}",
+            "S3_BUCKET": "${RUNTIME_S3_BUCKET}",
+            "S3_ENDPOINT": "${RUNTIME_S3_ENDPOINT}",
+            "S3_SECRET_ACCESS_KEY": "${RUNTIME_S3_SECRET_ACCESS_KEY}"
+          },
+          "os": "ubuntu"
+        },
+        "run": {
+          "base": "nodejs@20",
+          "envVariables": {
+            "DATABASE_URI": "${db_connectionString}/${db_dbName}",
+            "NEXT_PUBLIC_SERVER_URL": "${zeropsSubdomain}",
+            "S3_ACCESS_KEY_ID": "${storage_accessKeyId}",
+            "S3_BUCKET": "${storage_bucketName}",
+            "S3_ENDPOINT": "${storage_apiUrl}",
+            "S3_SECRET_ACCESS_KEY": "${storage_secretAccessKey}"
+          },
+          "os": "ubuntu",
+          "ports": [
+            {
+              "httpSupport": true,
+              "port": 3000
+            }
+          ],
+          "start": "pnpm start"
+        },
+        "setup": "api"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-payload-main",
+  "deploymentType": "git"
+}

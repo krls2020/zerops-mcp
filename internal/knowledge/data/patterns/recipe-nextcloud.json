@@ -1,0 +1,80 @@
+{
+  "patternId": "recipe-nextcloud",
+  "name": "Nextcloud",
+  "description": "Nextcloud service for Zerops",
+  "framework": "Recipe Nextcloud",
+  "language": "Unknown",
+  "tags": [],
+  "services": [
+    {
+      "hostname": "pg",
+      "mode": "NON_HA",
+      "priority": 10,
+      "type": "postgresql@17"
+    },
+    {
+      "hostname": "storage",
+      "objectStoragePolicy": "private",
+      "objectStorageSize": 1,
+      "priority": 10,
+      "type": "object-storage"
+    },
+    {
+      "buildFromGit": "https://github.com/zeropsio/recipe-nextcloud",
+      "enableSubdomainAccess": true,
+      "envSecrets": {
+        "ADMIN_PASSWORD": "\u003c@generateRandomString(\u003c12\u003e)\u003e"
+      },
+      "hostname": "nextcloud",
+      "maxContainers": 1,
+      "type": "php-nginx@8.4",
+      "verticalAutoscaling": {
+        "minFreeRamGB": 0.25,
+        "minRam": 0.5
+      }
+    }
+  ],
+  "zeropsYml": {
+    "zerops": [
+      {
+        "run": {
+          "base": "php-nginx@8.4",
+          "envVariables": {
+            "ADMIN_USER": "admin",
+            "DATABASE": "pgsql",
+            "DATABASE_HOST": "pg",
+            "DATABASE_NAME": "$pg_dbName",
+            "DATABASE_PASSWORD": "$pg_password",
+            "DATABASE_PORT": "$pg_port",
+            "DATABASE_USER": "$pg_user",
+            "NEXTCLOUD_VERSION": "31.0.5",
+            "PHP_INI_memory_limit": "512M",
+            "SERVER_DOMAIN": "$zeropsSubdomain",
+            "STORAGE_ACCESS_KEY": "$storage_accessKeyId",
+            "STORAGE_BUCKET": "$storage_bucketName",
+            "STORAGE_HOSTNAME": "$storage_apiHost",
+            "STORAGE_SECRET_KEY": "$storage_secretAccessKey"
+          },
+          "os": "ubuntu",
+          "prepareCommands": [
+            "sudo apt-get update",
+            "sudo apt-get upgrade -y",
+            "sudo apt-get install -y php-gd php-mysql php-curl php-mbstring php-intl php-gmp php-xml php-imagick php-zip",
+            "wget https://download.nextcloud.com/server/releases/nextcloud-$NEXTCLOUD_VERSION.tar.bz2",
+            "wget https://download.nextcloud.com/server/releases/nextcloud-$NEXTCLOUD_VERSION.tar.bz2.sha256",
+            "sha256sum --ignore-missing -c nextcloud-$NEXTCLOUD_VERSION.tar.bz2.sha256 \u003c nextcloud-$NEXTCLOUD_VERSION.tar.bz2",
+            "tar -xjvf nextcloud-$NEXTCLOUD_VERSION.tar.bz2",
+            "sudo cp -r nextcloud /var/www",
+            "sudo chown -R zerops:zerops /var/www/nextcloud",
+            "rm -r nextcloud nextcloud-$NEXTCLOUD_VERSION.tar.bz2 nextcloud-$NEXTCLOUD_VERSION.tar.bz2.sha256",
+            "cat \u003c\u003c EOF | sudo tee /etc/systemd/network/10-interface.network \u003e /dev/null\n[Match]\nName=eth0\nEOF\n"
+          ],
+          "siteConfigPath": "nginx.conf.tmpl"
+        },
+        "setup": "nextcloud"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-nextcloud-main",
+  "deploymentType": "git"
+}

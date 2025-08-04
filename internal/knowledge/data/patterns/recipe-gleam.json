@@ -1,0 +1,50 @@
+{
+  "patternId": "recipe-gleam",
+  "name": "Gleam",
+  "description": "Recipe Gleam application",
+  "framework": "Recipe Gleam",
+  "language": "Unknown",
+  "tags": [],
+  "services": [
+    {
+      "enableSubdomainAccess": true,
+      "hostname": "api",
+      "type": "gleam@1.5"
+    },
+    {
+      "hostname": "db",
+      "mode": "NON_HA",
+      "priority": 1,
+      "type": "postgresql@16"
+    }
+  ],
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "base": "gleam@1.5",
+          "buildCommands": [
+            "gleam export erlang-shipment"
+          ],
+          "deployFiles": "build/erlang-shipment/~"
+        },
+        "run": {
+          "base": "gleam@1.5",
+          "envVariables": {
+            "DATABASE_URL": "${db_connectionString}/${db_dbName}"
+          },
+          "ports": [
+            {
+              "httpSupport": true,
+              "port": 3000
+            }
+          ],
+          "start": "./entrypoint.sh run"
+        },
+        "setup": "api"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-gleam-main",
+  "deploymentType": "local"
+}

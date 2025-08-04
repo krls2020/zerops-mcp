@@ -1,0 +1,40 @@
+{
+  "patternId": "recipe-nuxt-static",
+  "name": "Nuxt Static",
+  "description": "Nuxt application",
+  "framework": "Nuxt",
+  "language": "JavaScript",
+  "tags": [
+    "nuxt",
+    "static"
+  ],
+  "services": [
+    {
+      "enableSubdomainAccess": true,
+      "hostname": "app",
+      "type": "static"
+    }
+  ],
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "base": "nodejs@20",
+          "buildCommands": [
+            "yarn",
+            "yarn nuxi generate"
+          ],
+          "deployFiles": [
+            ".output/public/~"
+          ]
+        },
+        "run": {
+          "base": "static"
+        },
+        "setup": "app"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-nuxt-static-main",
+  "deploymentType": "local"
+}

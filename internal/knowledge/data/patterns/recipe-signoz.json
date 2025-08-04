@@ -1,0 +1,30 @@
+{
+  "patternId": "recipe-signoz",
+  "name": "Signoz",
+  "description": "Recipe Signoz application",
+  "framework": "Recipe Signoz",
+  "language": "Unknown",
+  "tags": [],
+  "services": null,
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "base": "ubuntu@22.04",
+          "buildCommands": [
+            "deploy/install.sh"
+          ],
+          "deployFiles": [
+            "/"
+          ]
+        },
+        "run": {
+          "base": "ubuntu@22.04"
+        },
+        "setup": "signoz"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-signoz-main",
+  "deploymentType": "local"
+}

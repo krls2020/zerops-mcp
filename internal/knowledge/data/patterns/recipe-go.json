@@ -1,0 +1,70 @@
+{
+  "patternId": "recipe-go",
+  "name": "Go",
+  "description": "Recipe Go application",
+  "framework": "Recipe Go",
+  "language": "Go",
+  "tags": [
+    "go"
+  ],
+  "services": [
+    {
+      "enableSubdomainAccess": true,
+      "hostname": "api",
+      "type": "go@1.22"
+    },
+    {
+      "hostname": "db",
+      "mode": "NON_HA",
+      "priority": 1,
+      "type": "postgresql@16"
+    }
+  ],
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "base": "go@1",
+          "buildCommands": [
+            "go build -o app ."
+          ],
+          "deployFiles": "./app"
+        },
+        "deploy": {
+          "readinessCheck": {
+            "httpGet": {
+              "path": "/status",
+              "port": 8080
+            }
+          }
+        },
+        "run": {
+          "base": "go@1",
+          "envVariables": {
+            "DB_HOST": "${db_hostname}",
+            "DB_NAME": "db",
+            "DB_PASS": "${db_password}",
+            "DB_PORT": "${db_port}",
+            "DB_USER": "${db_user}"
+          },
+          "healthCheck": {
+            "httpGet": {
+              "path": "/status",
+              "port": 8080
+            }
+          },
+          "ports": [
+            {
+              "httpSupport": true,
+              "port": 8080
+            }
+          ],
+          "start": "./app"
+        },
+        "setup": "api"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-go-main",
+  "deploymentType": "local"
+}

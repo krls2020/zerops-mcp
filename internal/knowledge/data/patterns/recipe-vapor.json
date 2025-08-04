@@ -1,0 +1,12 @@
+{
+  "patternId": "recipe-vapor",
+  "name": "Vapor",
+  "description": "Recipe Vapor application",
+  "framework": "Recipe Vapor",
+  "language": "Unknown",
+  "tags": [],
+  "services": null,
+  "zeropsYml": null,
+  "sourceRecipe": "recipe-vapor-main",
+  "deploymentType": "local"
+}

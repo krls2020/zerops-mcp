@@ -1,0 +1,73 @@
+{
+  "patternId": "recipe-phoenix",
+  "name": "Phoenix",
+  "description": "Phoenix application",
+  "framework": "Phoenix",
+  "language": "Elixir",
+  "tags": [
+    "phoenix"
+  ],
+  "services": [
+    {
+      "enableSubdomainAccess": true,
+      "envSecrets": {
+        "SECRET_KEY_BASE": "\u003c@generateRandomString(\u003c64\u003e)\u003e"
+      },
+      "hostname": "app",
+      "type": "elixir@1.16",
+      "verticalAutoscaling": {
+        "minFreeRamGB": 0.125,
+        "minRam": 0.25
+      }
+    },
+    {
+      "hostname": "db",
+      "mode": "NON_HA",
+      "type": "postgresql@16"
+    }
+  ],
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "base": "elixir@1.16",
+          "buildCommands": [
+            "mix deps.get --only prod",
+            "mix ecto.create",
+            "mix ecto.migrate",
+            "mix compile",
+            "mix assets.deploy",
+            "mix phx.digest",
+            "mix release --overwrite"
+          ],
+          "deployFiles": "/",
+          "envVariables": {
+            "DATABASE_URL": "${db_connectionString}/${db_dbName}",
+            "MIX_ENV": "prod",
+            "SECRET_KEY_BASE": "${RUNTIME_SECRET_KEY_BASE}"
+          }
+        },
+        "run": {
+          "base": "alpine@latest",
+          "envVariables": {
+            "DATABASE_URL": "${db_connectionString}/${db_dbName}",
+            "PHX_HOST": "${zeropsSubdomain}",
+            "PHX_SERVER": true,
+            "POOL_SIZE": 10,
+            "PORT": 4000
+          },
+          "ports": [
+            {
+              "httpSupport": true,
+              "port": 4000
+            }
+          ],
+          "start": "_build/prod/rel/recipe_phoenix/bin/recipe_phoenix start"
+        },
+        "setup": "app"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-phoenix-main",
+  "deploymentType": "local"
+}

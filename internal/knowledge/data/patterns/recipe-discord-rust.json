@@ -1,0 +1,33 @@
+{
+  "patternId": "recipe-discord-rust",
+  "name": "Discord Rust",
+  "description": "Recipe Discord Rust application",
+  "framework": "Recipe Discord Rust",
+  "language": "Rust",
+  "tags": [
+    "rust"
+  ],
+  "services": null,
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "base": "rust@1.78",
+          "buildCommands": [
+            "cargo build --release"
+          ],
+          "deployFiles": [
+            "./target/release/~"
+          ]
+        },
+        "run": {
+          "base": "rust@1.78",
+          "start": "./recipe-discord-rust"
+        },
+        "setup": "bot"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-discord-rust-main",
+  "deploymentType": "local"
+}

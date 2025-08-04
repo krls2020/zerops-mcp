@@ -1,0 +1,67 @@
+{
+  "patternId": "recipe-ruby",
+  "name": "Ruby",
+  "description": "Recipe Ruby application",
+  "framework": "Recipe Ruby",
+  "language": "Ruby",
+  "tags": [
+    "ruby"
+  ],
+  "services": [
+    {
+      "hostname": "db",
+      "mode": "NON_HA",
+      "type": "postgresql@16"
+    },
+    {
+      "enableSubdomainAccess": true,
+      "hostname": "app",
+      "type": "ruby@3.4"
+    }
+  ],
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "base": "ruby@3.4",
+          "buildCommands": [
+            "bundle install"
+          ],
+          "deployFiles": [
+            "."
+          ],
+          "envVariables": {
+            "BUNDLE_DEPLOYMENT": 1,
+            "BUNDLE_WITHOUT": "development",
+            "RACK_ENV": "production"
+          },
+          "os": "alpine"
+        },
+        "run": {
+          "base": "ruby@3.4",
+          "envVariables": {
+            "BUNDLE_DEPLOYMENT": 1,
+            "BUNDLE_WITHOUT": "development",
+            "DB_HOST": "$db_hostname",
+            "DB_NAME": "$db_dbName",
+            "DB_PASS": "$db_password",
+            "DB_PORT": "$db_port",
+            "DB_USER": "$db_user",
+            "RACK_ENV": "production"
+          },
+          "os": "alpine",
+          "ports": [
+            {
+              "httpSupport": true,
+              "port": 8080
+            }
+          ],
+          "start": "bundle exec ruby app.rb"
+        },
+        "setup": "app"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-ruby-main",
+  "deploymentType": "local"
+}

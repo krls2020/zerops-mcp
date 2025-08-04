@@ -1,0 +1,70 @@
+{
+  "patternId": "s3browser",
+  "name": "S3browser",
+  "description": "S3browser service for Zerops",
+  "framework": "S3browser",
+  "language": "Unknown",
+  "tags": [],
+  "services": [
+    {
+      "hostname": "storage",
+      "objectStoragePolicy": "public-read",
+      "objectStorageSize": 2,
+      "priority": 10,
+      "type": "object-storage"
+    },
+    {
+      "buildFromGit": "https://github.com/zeropsio/s3browser",
+      "enableSubdomainAccess": true,
+      "envSecrets": {
+        "APP_KEY": "\u003c@generateRandomString(\u003c32\u003e)\u003e"
+      },
+      "hostname": "s3browser",
+      "type": "php-nginx@8.3"
+    }
+  ],
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "base": "php@8.3",
+          "buildCommands": [
+            "composer install --optimize-autoloader --no-dev"
+          ],
+          "cache": [
+            "vendor",
+            "composer.lock"
+          ],
+          "deployFiles": "./"
+        },
+        "run": {
+          "base": "php-nginx@8.3",
+          "envVariables": {
+            "APP_DEBUG": true,
+            "APP_ENV": "production",
+            "APP_LOCALE": "en",
+            "APP_NAME": "ZeropsS3Browser",
+            "AWS_ACCESS_KEY_ID": "${storage_accessKeyId}",
+            "AWS_BUCKET": "${storage_bucketName}",
+            "AWS_ENDPOINT": "${storage_apiUrl}",
+            "AWS_REGION": "us-east-1",
+            "AWS_SECRET_ACCESS_KEY": "${storage_secretAccessKey}",
+            "AWS_URL": "${storage_apiUrl}/${storage_bucketName}",
+            "AWS_USE_PATH_STYLE_ENDPOINT": true,
+            "DB_CONNECTION": null,
+            "DB_DATABASE": null,
+            "DB_HOST": null,
+            "DB_PASSWORD": null,
+            "DB_PORT": null,
+            "DB_USERNAME": null,
+            "SESSION_DRIVER": "file"
+          },
+          "siteConfigPath": "site.conf.tmpl"
+        },
+        "setup": "s3browser"
+      }
+    ]
+  },
+  "sourceRecipe": "s3browser-main",
+  "deploymentType": "git"
+}

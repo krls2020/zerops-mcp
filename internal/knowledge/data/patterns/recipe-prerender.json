@@ -1,0 +1,53 @@
+{
+  "patternId": "recipe-prerender",
+  "name": "Prerender",
+  "description": "Prerender service for Zerops",
+  "framework": "Recipe Prerender",
+  "language": "Unknown",
+  "tags": [],
+  "services": [
+    {
+      "buildFromGit": "https://github.com/zeropsio/recipe-prerender",
+      "enableSubdomainAccess": true,
+      "hostname": "prerender",
+      "type": "nodejs@20"
+    }
+  ],
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "base": "nodejs@20",
+          "buildCommands": [
+            "npm i"
+          ],
+          "deploy": [
+            "node_modules",
+            "server.js"
+          ]
+        },
+        "run": {
+          "base": "nodejs@20",
+          "envVariables": {
+            "MEMORY_CACHE": 1,
+            "NODE_ENV": "production"
+          },
+          "ports": [
+            {
+              "httpSupport": true,
+              "port": 3000
+            }
+          ],
+          "prepareCommands": [
+            "sudo apk add --update-cache chromium",
+            "sudo rm -rf /var/cache/apk/* /tmp/*"
+          ],
+          "start": "node server.js"
+        },
+        "setup": "prerender"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-prerender-main",
+  "deploymentType": "git"
+}

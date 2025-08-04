@@ -1,0 +1,168 @@
+{
+  "patternId": "recipe-openpanel",
+  "name": "Openpanel",
+  "description": "Openpanel service for Zerops",
+  "framework": "Recipe Openpanel",
+  "language": "Unknown",
+  "tags": [],
+  "services": [
+    {
+      "hostname": "kv",
+      "mode": "NON_HA",
+      "type": "keydb@6"
+    },
+    {
+      "hostname": "db",
+      "mode": "NON_HA",
+      "type": "postgresql@16"
+    },
+    {
+      "hostname": "ch",
+      "mode": "NON_HA",
+      "type": "clickhouse@25.3"
+    },
+    {
+      "hostname": "api",
+      "maxContainers": 1,
+      "type": "nodejs@20"
+    },
+    {
+      "hostname": "dashboard",
+      "maxContainers": 1,
+      "type": "nodejs@20"
+    }
+  ],
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "base": "nodejs@20",
+          "os": "ubuntu"
+        },
+        "run": {
+          "base": "nodejs@20",
+          "envVariables": {
+            "CLICKHOUSE_URL": "http://$ch_user:$ch_password@ch:8123/openpanel",
+            "COOKIE_SECRET": "somesecrettodo",
+            "DATABASE_URL": "$db_connectionString/$db_dbName",
+            "DATABASE_URL_DIRECT": "$DATABASE_URL",
+            "EMAIL_SENDER": "email@domain.tld",
+            "REDIS_URL": "redis://kv:6379"
+          },
+          "os": "ubuntu"
+        },
+        "setup": "base"
+      },
+      {
+        "build": {
+          "buildCommands": [
+            "pnpm install --frozen-lockfile",
+            "pnpm store prune",
+            "pnpm db:codegen",
+            "pnpm --filter api run build"
+          ],
+          "cache": "node_modules",
+          "deployFiles": [
+            "."
+          ],
+          "envVariables": {
+            "COREPACK_INTEGRITY_KEYS": 0,
+            "DATABASE_URL": "$db_connectionString/$db_dbName"
+          },
+          "prepareCommands": [
+            "corepack enable",
+            "sudo apt-get update",
+            "sudo apt-get install -y --no-install-recommends python3 make g++ ca-certificates openssl libssl3 curl netcat-openbsd",
+            "sudo apt-get clean"
+          ]
+        },
+        "extends": [
+          "base"
+        ],
+        "run": {
+          "envVariables": {
+            "ALLOW_INVITATION": true,
+            "ALLOW_REGISTRATION": false,
+            "BATCH_INTERVAL": 10000,
+            "BATCH_SIZE": 5000,
+            "CI": true,
+            "GEO_IP_HOST": "http://op-geo:8080",
+            "NEXT_PUBLIC_API_URL": "$zeropsSubdomain/api",
+            "NEXT_PUBLIC_DASHBOARD_URL": "$dashboard_zeropsSubdomain",
+            "NODE_ENV": "production",
+            "SELF_HOSTED": true
+          },
+          "ports": [
+            {
+              "httpSupport": true,
+              "port": 3000
+            }
+          ],
+          "startCommands": [
+            {
+              "command": "node dist/index.js",
+              "workingDir": "/var/www/apps/api"
+            }
+          ]
+        },
+        "setup": "api"
+      },
+      {
+        "build": {
+          "buildCommands": [
+            "pnpm install --frozen-lockfile --ignore-scripts",
+            "pnpm db:codegen",
+            "cd apps/dashboard \u0026\u0026 pnpm run build",
+            "mv -v apps/dashboard/.next/static $STANDALONE_PATH/apps/dashboard/.next/static",
+            "mv -v apps/dashboard/public $STANDALONE_PATH/apps/dashboard/public"
+          ],
+          "cache": "node_modules",
+          "deployFiles": [
+            "apps/dashboard/.next/standalone"
+          ],
+          "envVariables": {
+            "COREPACK_INTEGRITY_KEYS": 0,
+            "DATABASE_URL": "$db_connectionString/$db_dbName",
+            "NEXT_PUBLIC_API_URL": "$api_zeropsSubdomain/api",
+            "NEXT_PUBLIC_DASHBOARD_URL": "$RUNTIME_zeropsSubdomain",
+            "REDIS_URL": "redis://kv:6379",
+            "SKIP_ENV_VALIDATION": 1,
+            "STANDALONE_PATH": "apps/dashboard/.next/standalone"
+          },
+          "prepareCommands": [
+            "corepack enable",
+            "sudo apt-get update",
+            "sudo apt-get install -y openssl libssl3"
+          ]
+        },
+        "extends": [
+          "base"
+        ],
+        "run": {
+          "envVariables": {
+            "NEXT_TELEMETRY_DISABLED": 1,
+            "NODE_ENV": "production"
+          },
+          "ports": [
+            {
+              "httpSupport": true,
+              "port": 3000
+            }
+          ],
+          "startCommands": [
+            {
+              "command": "node apps/dashboard/server.js",
+              "workingDir": "/var/www/apps/dashboard/.next/standalone"
+            }
+          ]
+        },
+        "setup": "dashboard"
+      },
+      {
+        "setup": "worker"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-openpanel-main",
+  "deploymentType": "git"
+}

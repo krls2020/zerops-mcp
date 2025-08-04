@@ -1,0 +1,12 @@
+{
+  "patternId": "pulumi-zerops",
+  "name": "Pulumi Zerops",
+  "description": "Pulumi Zerops application",
+  "framework": "Pulumi Zerops",
+  "language": "Unknown",
+  "tags": [],
+  "services": null,
+  "zeropsYml": null,
+  "sourceRecipe": "pulumi-zerops-main",
+  "deploymentType": "local"
+}

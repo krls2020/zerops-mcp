@@ -1,0 +1,97 @@
+{
+  "patternId": "pitch-chat",
+  "name": "Pitch Chat",
+  "description": "Pitch Chat application",
+  "framework": "Pitch Chat",
+  "language": "Unknown",
+  "tags": [],
+  "services": null,
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "base": "nodejs@22",
+          "buildCommands": [
+            "npm i",
+            "npm run build:api"
+          ],
+          "cache": [
+            "node_modules"
+          ],
+          "deployFiles": [
+            "node_modules",
+            "dist/apps/api",
+            "package.json"
+          ],
+          "os": "ubuntu"
+        },
+        "run": {
+          "base": "nodejs@22",
+          "os": "ubuntu",
+          "ports": [
+            {
+              "httpSupport": true,
+              "port": 3333
+            }
+          ],
+          "start": "node dist/apps/api/main.js"
+        },
+        "setup": "api"
+      },
+      {
+        "build": {
+          "base": "nodejs@22",
+          "buildCommands": [
+            "npm i",
+            "npm run build:chunker"
+          ],
+          "cache": [
+            "node_modules"
+          ],
+          "deployFiles": [
+            "node_modules",
+            "dist/apps/chonker",
+            "package.json"
+          ],
+          "os": "ubuntu"
+        },
+        "run": {
+          "base": "nodejs@22",
+          "os": "ubuntu",
+          "ports": [
+            {
+              "httpSupport": true,
+              "port": 1337
+            }
+          ],
+          "start": "node dist/apps/chonker/main.js"
+        },
+        "setup": "chunker"
+      },
+      {
+        "build": {
+          "base": "nodejs@22",
+          "buildCommands": [
+            "npm i",
+            "npm run build:app"
+          ],
+          "cache": [
+            "node_modules"
+          ],
+          "deployFiles": [
+            "dist/apps/app/browser/~"
+          ],
+          "envVariables": {
+            "Z_API_URL": "${RUNTIME_Z_API_URL}"
+          }
+        },
+        "run": {
+          "base": "static"
+        },
+        "setup": "app"
+      }
+    ]
+  },
+  "sourceRecipe": "pitch-chat-main",
+  "deploymentType": "local"
+}

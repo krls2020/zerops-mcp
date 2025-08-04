@@ -1,0 +1,51 @@
+{
+  "patternId": "recipe-react-nodejs",
+  "name": "React Nodejs",
+  "description": "React application",
+  "framework": "React",
+  "language": "JavaScript",
+  "tags": [
+    "react",
+    "nodejs"
+  ],
+  "services": [
+    {
+      "enableSubdomainAccess": true,
+      "hostname": "app",
+      "type": "nodejs@20"
+    }
+  ],
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "base": "nodejs@20",
+          "buildCommands": [
+            "pnpm i",
+            "pnpm build"
+          ],
+          "deployFiles": [
+            "public",
+            "node_modules",
+            "dist",
+            "package.json",
+            "server.js"
+          ]
+        },
+        "run": {
+          "base": "nodejs@20",
+          "ports": [
+            {
+              "httpSupport": true,
+              "port": 3000
+            }
+          ],
+          "start": "pnpm start"
+        },
+        "setup": "app"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-react-nodejs-main",
+  "deploymentType": "local"
+}

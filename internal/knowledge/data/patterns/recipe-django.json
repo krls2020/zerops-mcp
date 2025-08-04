@@ -1,0 +1,118 @@
+{
+  "patternId": "recipe-django",
+  "name": "Django",
+  "description": "Django application",
+  "framework": "Django",
+  "language": "Python",
+  "tags": [
+    "django"
+  ],
+  "services": [
+    {
+      "enableSubdomainAccess": true,
+      "envSecrets": {
+        "DJANGO_SUPERUSER_PASSWORD": "\u003c@generateRandomString(\u003c12\u003e)\u003e",
+        "SECRET_KEY": "\u003c@generateRandomBytes(\u003c32\u003e) | toString\u003e"
+      },
+      "hostname": "app",
+      "type": "python@3.12"
+    },
+    {
+      "hostname": "db",
+      "mode": "NON_HA",
+      "priority": 10,
+      "type": "postgresql@16"
+    },
+    {
+      "hostname": "storage",
+      "objectStoragePolicy": "public-read",
+      "objectStorageSize": 5,
+      "priority": 10,
+      "type": "object-storage"
+    },
+    {
+      "enableSubdomainAccess": true,
+      "hostname": "mailpit",
+      "type": "go@1"
+    },
+    {
+      "enableSubdomainAccess": true,
+      "hostname": "adminer",
+      "type": "php-apache@8.1"
+    }
+  ],
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "addToRunPrepare": [
+            "requirements.txt"
+          ],
+          "base": "python@3.12",
+          "deployFiles": [
+            "files/",
+            "recipe/",
+            "manage.py",
+            "gunicorn.conf.py"
+          ],
+          "os": "alpine"
+        },
+        "run": {
+          "base": "python@3.12",
+          "envVariables": {
+            "APP_SUBDOMAIN_URL": "$zeropsSubdomain",
+            "DB_HOST": "$db_hostname",
+            "DB_PASSWORD": "$db_password",
+            "DB_PORT": "$db_port",
+            "DB_USER": "$db_user",
+            "MAIL_HOST": "mailpit",
+            "MAIL_PORT": "1025",
+            "PYTHONDONTWRITEBYTECODE": "1",
+            "PYTHONUNBUFFERED": "1",
+            "S3_ACCESS_KEY_ID": "$storage_accessKeyId",
+            "S3_BUCKET_NAME": "$storage_bucketName",
+            "S3_ENDPOINT_URL": "$storage_apiUrl",
+            "S3_SECRET_ACCESS_KEY": "$storage_secretAccessKey",
+            "USE_S3": "1"
+          },
+          "initCommands": [
+            "zsc execOnce migrate-${ZEROPS_appVersionId} -- python manage.py migrate",
+            "zsc execOnce collectstatic-${ZEROPS_appVersionId} -- python manage.py collectstatic --no-input --verbosity 3",
+            "zsc execOnce createsuperuser -- python manage.py createsuperuser --no-input --username admin --email admin@example.com || true"
+          ],
+          "os": "alpine",
+          "ports": [
+            {
+              "httpSupport": true,
+              "port": 8000
+            }
+          ],
+          "prepareCommands": [
+            "sudo apk add tzdata",
+            "pip install --no-cache-dir -r requirements.txt"
+          ],
+          "start": "gunicorn recipe.wsgi"
+        },
+        "setup": "app"
+      }
+    ]
+  },
+  "commonIssues": [
+    {
+      "issue": "Static files not found",
+      "solution": "Run collectstatic in buildCommands"
+    },
+    {
+      "issue": "Database migrations fail",
+      "solution": "Ensure database service is running first"
+    }
+  ],
+  "bestPractices": [
+    "Use gunicorn for production",
+    "Collect static files during build",
+    "Use PostgreSQL for database",
+    "Set DEBUG=False for production"
+  ],
+  "sourceRecipe": "recipe-django-main",
+  "deploymentType": "local"
+}

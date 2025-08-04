@@ -1,0 +1,901 @@
+{
+  "patterns": [
+    {
+      "category": "framework",
+      "framework": "Django",
+      "id": "django-full-stack",
+      "language": "Python",
+      "name": "Django Full Stack"
+    },
+    {
+      "category": "framework",
+      "framework": "Express.js",
+      "id": "express-api",
+      "language": "JavaScript/TypeScript",
+      "name": "Express.js API"
+    },
+    {
+      "category": "framework",
+      "framework": "FastAPI",
+      "id": "fastapi-async",
+      "language": "Python",
+      "name": "FastAPI Async"
+    },
+    {
+      "category": "framework",
+      "framework": "Flask",
+      "id": "flask-simple",
+      "language": "Python",
+      "name": "Flask Simple"
+    },
+    {
+      "category": "framework",
+      "framework": "Laravel",
+      "id": "laravel-full-stack",
+      "language": "PHP",
+      "name": "Laravel Full Stack"
+    },
+    {
+      "category": "framework",
+      "framework": "Next.js",
+      "id": "nextjs-self-host",
+      "language": "JavaScript",
+      "name": "Nextjs Self Host"
+    },
+    {
+      "category": "framework",
+      "framework": "Next.js",
+      "id": "nextjs-full-stack",
+      "language": "JavaScript/TypeScript",
+      "name": "Next.js Full Stack"
+    },
+    {
+      "category": "framework",
+      "framework": "Ngrx Store Logger Master",
+      "id": "ngrx-store-logger-master",
+      "language": "Unknown",
+      "name": "Ngrx Store Logger Master"
+    },
+    {
+      "category": "framework",
+      "framework": "Pitch Chat",
+      "id": "pitch-chat",
+      "language": "Unknown",
+      "name": "Pitch Chat"
+    },
+    {
+      "category": "framework",
+      "framework": "Pulumi Zerops",
+      "id": "pulumi-zerops",
+      "language": "Unknown",
+      "name": "Pulumi Zerops"
+    },
+    {
+      "category": "tool",
+      "framework": "Recipe Adminer",
+      "id": "recipe-adminer",
+      "language": "Unknown",
+      "name": "Adminer"
+    },
+    {
+      "category": "tool",
+      "framework": "Recipe Adminerevo",
+      "id": "recipe-adminerevo",
+      "language": "Unknown",
+      "name": "Adminerevo"
+    },
+    {
+      "category": "framework",
+      "framework": "AdonisJS",
+      "id": "recipe-adonis",
+      "language": "Unknown",
+      "name": "Adonis"
+    },
+    {
+      "category": "tool",
+      "framework": "Recipe Airflow",
+      "id": "recipe-airflow",
+      "language": "Unknown",
+      "name": "Airflow"
+    },
+    {
+      "category": "framework",
+      "framework": "Recipe Analog Nodejs",
+      "id": "recipe-analog-nodejs",
+      "language": "JavaScript",
+      "name": "Analog Nodejs"
+    },
+    {
+      "category": "framework",
+      "framework": "Recipe Analog Static",
+      "id": "recipe-analog-static",
+      "language": "Unknown",
+      "name": "Analog Static"
+    },
+    {
+      "category": "framework",
+      "framework": "Angular",
+      "id": "recipe-angular-nodejs",
+      "language": "JavaScript",
+      "name": "Angular Nodejs"
+    },
+    {
+      "category": "framework",
+      "framework": "Angular",
+      "id": "recipe-angular-static",
+      "language": "TypeScript",
+      "name": "Angular Static"
+    },
+    {
+      "category": "framework",
+      "framework": "Astro",
+      "id": "recipe-astro-nodejs",
+      "language": "JavaScript",
+      "name": "Astro Nodejs"
+    },
+    {
+      "category": "framework",
+      "framework": "Astro",
+      "id": "recipe-astro-static",
+      "language": "Unknown",
+      "name": "Astro Static"
+    },
+    {
+      "category": "framework",
+      "framework": "Recipe Bun",
+      "id": "recipe-bun",
+      "language": "TypeScript",
+      "name": "Bun"
+    },
+    {
+      "category": "tool",
+      "framework": "Recipe Chartbrew",
+      "id": "recipe-chartbrew",
+      "language": "Unknown",
+      "name": "Chartbrew"
+    },
+    {
+      "category": "tool",
+      "framework": "Recipe Contember Engine",
+      "id": "recipe-contember-engine",
+      "language": "Unknown",
+      "name": "Contember Engine"
+    },
+    {
+      "category": "framework",
+      "framework": "Recipe Deno",
+      "id": "recipe-deno",
+      "language": "TypeScript",
+      "name": "Deno"
+    },
+    {
+      "category": "tool",
+      "framework": "Recipe Directus",
+      "id": "recipe-directus",
+      "language": "Unknown",
+      "name": "Directus"
+    },
+    {
+      "category": "framework",
+      "framework": "Recipe Discord Bun",
+      "id": "recipe-discord-bun",
+      "language": "TypeScript",
+      "name": "Discord Bun"
+    },
+    {
+      "category": "framework",
+      "framework": "Recipe Discord Nodejs",
+      "id": "recipe-discord-nodejs",
+      "language": "JavaScript",
+      "name": "Discord Nodejs"
+    },
+    {
+      "category": "framework",
+      "framework": "Recipe Discord Py",
+      "id": "recipe-discord-py",
+      "language": "Unknown",
+      "name": "Discord Py"
+    },
+    {
+      "category": "framework",
+      "framework": "Recipe Discord Rust",
+      "id": "recipe-discord-rust",
+      "language": "Rust",
+      "name": "Discord Rust"
+    },
+    {
+      "category": "framework",
+      "framework": "Django",
+      "id": "recipe-django",
+      "language": "Go",
+      "name": "Django"
+    },
+    {
+      "category": "framework",
+      "framework": "Recipe Docker",
+      "id": "recipe-docker",
+      "language": "Unknown",
+      "name": "Docker"
+    },
+    {
+      "category": "framework",
+      "framework": "Hello World",
+      "id": "recipe-dotnet-hello-world",
+      "language": "C#",
+      "name": "Dotnet Hello World"
+    },
+    {
+      "category": "framework",
+      "framework": "Recipe Dotnet",
+      "id": "recipe-dotnet",
+      "language": "C#",
+      "name": "Dotnet"
+    },
+    {
+      "category": "framework",
+      "framework": "Recipe Echo",
+      "id": "recipe-echo",
+      "language": "Unknown",
+      "name": "Echo"
+    },
+    {
+      "category": "framework",
+      "framework": "Recipe Elastic Stack",
+      "id": "recipe-elastic-stack",
+      "language": "Unknown",
+      "name": "Elastic Stack"
+    },
+    {
+      "category": "framework",
+      "framework": "Recipe Elixir",
+      "id": "recipe-elixir",
+      "language": "Elixir",
+      "name": "Elixir"
+    },
+    {
+      "category": "framework",
+      "framework": "Elysia",
+      "id": "recipe-elysia",
+      "language": "Unknown",
+      "name": "Elysia"
+    },
+    {
+      "category": "framework",
+      "framework": "Recipe Ember",
+      "id": "recipe-ember",
+      "language": "Unknown",
+      "name": "Ember"
+    },
+    {
+      "category": "framework",
+      "framework": "Recipe Erlang",
+      "id": "recipe-erlang",
+      "language": "Unknown",
+      "name": "Erlang"
+    },
+    {
+      "category": "tool",
+      "framework": "Recipe Filament",
+      "id": "recipe-filament",
+      "language": "Unknown",
+      "name": "Filament"
+    },
+    {
+      "category": "framework",
+      "framework": "Flask",
+      "id": "recipe-flask",
+      "language": "Python",
+      "name": "Flask"
+    },
+    {
+      "category": "tool",
+      "framework": "Recipe Forgejo",
+      "id": "recipe-forgejo",
+      "language": "Unknown",
+      "name": "Forgejo"
+    },
+    {
+      "category": "framework",
+      "framework": "Recipe Fresh Deno",
+      "id": "recipe-fresh-deno",
+      "language": "TypeScript",
+      "name": "Fresh Deno"
+    },
+    {
+      "category": "tool",
+      "framework": "Recipe Ghost",
+      "id": "recipe-ghost",
+      "language": "Unknown",
+      "name": "Ghost"
+    },
+    {
+      "category": "tool",
+      "framework": "Recipe Github Runner",
+      "id": "recipe-github-runner",
+      "language": "Unknown",
+      "name": "Github Runner"
+    },
+    {
+      "category": "framework",
+      "framework": "Recipe Gleam",
+      "id": "recipe-gleam",
+      "language": "Unknown",
+      "name": "Gleam"
+    },
+    {
+      "category": "framework",
+      "framework": "Hello World",
+      "id": "recipe-go-hello-world",
+      "language": "Go",
+      "name": "Go Hello World"
+    },
+    {
+      "category": "framework",
+      "framework": "Recipe Go",
+      "id": "recipe-go",
+      "language": "Go",
+      "name": "Go"
+    },
+    {
+      "category": "tool",
+      "framework": "Recipe Graylog",
+      "id": "recipe-graylog",
+      "language": "Unknown",
+      "name": "Graylog"
+    },
+    {
+      "category": "framework",
+      "framework": "Hono",
+      "id": "recipe-hono-deno",
+      "language": "TypeScript",
+      "name": "Hono Deno"
+    },
+    {
+      "category": "tool",
+      "framework": "Recipe Imgproxy",
+      "id": "recipe-imgproxy",
+      "language": "Unknown",
+      "name": "Imgproxy"
+    },
+    {
+      "category": "framework",
+      "framework": "Recipe Java",
+      "id": "recipe-java",
+      "language": "Java",
+      "name": "Java"
+    },
+    {
+      "category": "framework",
+      "framework": "Recipe Jekyll",
+      "id": "recipe-jekyll",
+      "language": "Unknown",
+      "name": "Jekyll"
+    },
+    {
+      "category": "framework",
+      "framework": "Laravel",
+      "id": "recipe-laravel-jetstream",
+      "language": "PHP",
+      "name": "Laravel Jetstream"
+    },
+    {
+      "category": "framework",
+      "framework": "Laravel",
+      "id": "recipe-laravel-minimal",
+      "language": "PHP",
+      "name": "Laravel Minimal"
+    },
+    {
+      "category": "framework",
+      "framework": "Recipe Lucky",
+      "id": "recipe-lucky",
+      "language": "Unknown",
+      "name": "Lucky"
+    },
+    {
+      "category": "tool",
+      "framework": "Recipe Mailpit",
+      "id": "recipe-mailpit",
+      "language": "Unknown",
+      "name": "Mailpit"
+    },
+    {
+      "category": "tool",
+      "framework": "Recipe Mattermost",
+      "id": "recipe-mattermost",
+      "language": "Unknown",
+      "name": "Mattermost"
+    },
+    {
+      "category": "tool",
+      "framework": "Recipe Medama",
+      "id": "recipe-medama",
+      "language": "Unknown",
+      "name": "Medama"
+    },
+    {
+      "category": "tool",
+      "framework": "Recipe Medusa Nextstore",
+      "id": "recipe-medusa-nextstore",
+      "language": "Unknown",
+      "name": "Medusa Nextstore"
+    },
+    {
+      "category": "tool",
+      "framework": "Recipe Medusa",
+      "id": "recipe-medusa",
+      "language": "Unknown",
+      "name": "Medusa"
+    },
+    {
+      "category": "tool",
+      "framework": "Recipe Meilisearch",
+      "id": "recipe-meilisearch",
+      "language": "Unknown",
+      "name": "Meilisearch"
+    },
+    {
+      "category": "tool",
+      "framework": "Recipe Metabase",
+      "id": "recipe-metabase",
+      "language": "Unknown",
+      "name": "Metabase"
+    },
+    {
+      "category": "framework",
+      "framework": "Recipe Meteor",
+      "id": "recipe-meteor",
+      "language": "Unknown",
+      "name": "Meteor"
+    },
+    {
+      "category": "tool",
+      "framework": "Recipe Minecraft Server",
+      "id": "recipe-minecraft-server",
+      "language": "Unknown",
+      "name": "Minecraft Server"
+    },
+    {
+      "category": "framework",
+      "framework": "NestJS",
+      "id": "recipe-nestjs",
+      "language": "Unknown",
+      "name": "Nestjs"
+    },
+    {
+      "category": "framework",
+      "framework": "Recipe Nette Contributte",
+      "id": "recipe-nette-contributte",
+      "language": "Unknown",
+      "name": "Nette Contributte"
+    },
+    {
+      "category": "framework",
+      "framework": "Recipe Nette",
+      "id": "recipe-nette",
+      "language": "Unknown",
+      "name": "Nette"
+    },
+    {
+      "category": "tool",
+      "framework": "Recipe Nextcloud",
+      "id": "recipe-nextcloud",
+      "language": "Unknown",
+      "name": "Nextcloud"
+    },
+    {
+      "category": "framework",
+      "framework": "Next.js",
+      "id": "recipe-nextjs-nodejs",
+      "language": "JavaScript",
+      "name": "Nextjs Nodejs"
+    },
+    {
+      "category": "framework",
+      "framework": "Next.js",
+      "id": "recipe-nextjs-static",
+      "language": "JavaScript",
+      "name": "Nextjs Static"
+    },
+    {
+      "category": "framework",
+      "framework": "Recipe Nitro Nodejs",
+      "id": "recipe-nitro-nodejs",
+      "language": "JavaScript",
+      "name": "Nitro Nodejs"
+    },
+    {
+      "category": "framework",
+      "framework": "Recipe Nitro Static",
+      "id": "recipe-nitro-static",
+      "language": "Unknown",
+      "name": "Nitro Static"
+    },
+    {
+      "category": "framework",
+      "framework": "Hello World",
+      "id": "recipe-nodejs-hello-world",
+      "language": "JavaScript",
+      "name": "Nodejs Hello World"
+    },
+    {
+      "category": "framework",
+      "framework": "Recipe Nodejs",
+      "id": "recipe-nodejs",
+      "language": "JavaScript",
+      "name": "Nodejs"
+    },
+    {
+      "category": "framework",
+      "framework": "Nuxt",
+      "id": "recipe-nuxt-nodejs",
+      "language": "JavaScript",
+      "name": "Nuxt Nodejs"
+    },
+    {
+      "category": "framework",
+      "framework": "Nuxt",
+      "id": "recipe-nuxt-static",
+      "language": "JavaScript",
+      "name": "Nuxt Static"
+    },
+    {
+      "category": "tool",
+      "framework": "Recipe Openpanel",
+      "id": "recipe-openpanel",
+      "language": "Unknown",
+      "name": "Openpanel"
+    },
+    {
+      "category": "tool",
+      "framework": "Recipe Payload",
+      "id": "recipe-payload",
+      "language": "Unknown",
+      "name": "Payload"
+    },
+    {
+      "category": "framework",
+      "framework": "Phoenix",
+      "id": "recipe-phoenix",
+      "language": "Elixir",
+      "name": "Phoenix"
+    },
+    {
+      "category": "framework",
+      "framework": "Hello World",
+      "id": "recipe-php-hello-world",
+      "language": "PHP",
+      "name": "Php Hello World"
+    },
+    {
+      "category": "framework",
+      "framework": "Recipe Php",
+      "id": "recipe-php",
+      "language": "PHP",
+      "name": "Php"
+    },
+    {
+      "category": "tool",
+      "framework": "Recipe Prerender",
+      "id": "recipe-prerender",
+      "language": "Unknown",
+      "name": "Prerender"
+    },
+    {
+      "category": "framework",
+      "framework": "Recipe Prometheus",
+      "id": "recipe-prometheus",
+      "language": "Unknown",
+      "name": "Prometheus"
+    },
+    {
+      "category": "framework",
+      "framework": "Hello World",
+      "id": "recipe-python-hello-world",
+      "language": "Python",
+      "name": "Python Hello World"
+    },
+    {
+      "category": "framework",
+      "framework": "Recipe Python",
+      "id": "recipe-python",
+      "language": "Python",
+      "name": "Python"
+    },
+    {
+      "category": "tool",
+      "framework": "Recipe Quake3 Server",
+      "id": "recipe-quake3-server",
+      "language": "Unknown",
+      "name": "Quake3 Server"
+    },
+    {
+      "category": "framework",
+      "framework": "Recipe Qwik Nodejs",
+      "id": "recipe-qwik-nodejs",
+      "language": "JavaScript",
+      "name": "Qwik Nodejs"
+    },
+    {
+      "category": "framework",
+      "framework": "Recipe Qwik Static",
+      "id": "recipe-qwik-static",
+      "language": "Unknown",
+      "name": "Qwik Static"
+    },
+    {
+      "category": "framework",
+      "framework": "Rails",
+      "id": "recipe-rails",
+      "language": "Ruby",
+      "name": "Rails"
+    },
+    {
+      "category": "framework",
+      "framework": "React",
+      "id": "recipe-react-nodejs",
+      "language": "JavaScript",
+      "name": "React Nodejs"
+    },
+    {
+      "category": "framework",
+      "framework": "React",
+      "id": "recipe-react-static",
+      "language": "JavaScript",
+      "name": "React Static"
+    },
+    {
+      "category": "framework",
+      "framework": "Remix",
+      "id": "recipe-remix-nodejs",
+      "language": "JavaScript",
+      "name": "Remix Nodejs"
+    },
+    {
+      "category": "framework",
+      "framework": "Recipe Ruby",
+      "id": "recipe-ruby",
+      "language": "Ruby",
+      "name": "Ruby"
+    },
+    {
+      "category": "framework",
+      "framework": "Hello World",
+      "id": "recipe-rust-hello-world",
+      "language": "Rust",
+      "name": "Rust Hello World"
+    },
+    {
+      "category": "framework",
+      "framework": "Recipe Rust",
+      "id": "recipe-rust",
+      "language": "Rust",
+      "name": "Rust"
+    },
+    {
+      "category": "framework",
+      "framework": "Recipe Sails",
+      "id": "recipe-sails",
+      "language": "Unknown",
+      "name": "Sails"
+    },
+    {
+      "category": "framework",
+      "framework": "Recipe Scala",
+      "id": "recipe-scala",
+      "language": "Unknown",
+      "name": "Scala"
+    },
+    {
+      "category": "framework",
+      "framework": "Recipe Signoz",
+      "id": "recipe-signoz",
+      "language": "Unknown",
+      "name": "Signoz"
+    },
+    {
+      "category": "framework",
+      "framework": "Recipe Slack Nodejs",
+      "id": "recipe-slack-nodejs",
+      "language": "JavaScript",
+      "name": "Slack Nodejs"
+    },
+    {
+      "category": "framework",
+      "framework": "Recipe Soft Serve",
+      "id": "recipe-soft-serve",
+      "language": "Unknown",
+      "name": "Soft Serve"
+    },
+    {
+      "category": "framework",
+      "framework": "Recipe Solidjs Nodejs",
+      "id": "recipe-solidjs-nodejs",
+      "language": "JavaScript",
+      "name": "Solidjs Nodejs"
+    },
+    {
+      "category": "framework",
+      "framework": "Recipe Solidjs Static",
+      "id": "recipe-solidjs-static",
+      "language": "Unknown",
+      "name": "Solidjs Static"
+    },
+    {
+      "category": "framework",
+      "framework": "Recipe Spring",
+      "id": "recipe-spring",
+      "language": "Unknown",
+      "name": "Spring"
+    },
+    {
+      "category": "framework",
+      "framework": "Recipe Supertokens",
+      "id": "recipe-supertokens",
+      "language": "Unknown",
+      "name": "Supertokens"
+    },
+    {
+      "category": "framework",
+      "framework": "Svelte",
+      "id": "recipe-svelte-nodejs",
+      "language": "JavaScript",
+      "name": "Svelte Nodejs"
+    },
+    {
+      "category": "framework",
+      "framework": "Svelte",
+      "id": "recipe-svelte-static",
+      "language": "Unknown",
+      "name": "Svelte Static"
+    },
+    {
+      "category": "framework",
+      "framework": "Symfony",
+      "id": "recipe-symfony",
+      "language": "PHP",
+      "name": "Symfony"
+    },
+    {
+      "category": "framework",
+      "framework": "Recipe Teable",
+      "id": "recipe-teable",
+      "language": "Unknown",
+      "name": "Teable"
+    },
+    {
+      "category": "framework",
+      "framework": "Recipe Tegola",
+      "id": "recipe-tegola",
+      "language": "Go",
+      "name": "Tegola"
+    },
+    {
+      "category": "framework",
+      "framework": "Recipe Telegram Nodejs",
+      "id": "recipe-telegram-nodejs",
+      "language": "JavaScript",
+      "name": "Telegram Nodejs"
+    },
+    {
+      "category": "framework",
+      "framework": "Recipe Terraria",
+      "id": "recipe-terraria",
+      "language": "Unknown",
+      "name": "Terraria"
+    },
+    {
+      "category": "framework",
+      "framework": "Recipe Turborepo",
+      "id": "recipe-turborepo",
+      "language": "Unknown",
+      "name": "Turborepo"
+    },
+    {
+      "category": "framework",
+      "framework": "Recipe Twenty",
+      "id": "recipe-twenty",
+      "language": "Unknown",
+      "name": "Twenty"
+    },
+    {
+      "category": "framework",
+      "framework": "Recipe Twill",
+      "id": "recipe-twill",
+      "language": "Unknown",
+      "name": "Twill"
+    },
+    {
+      "category": "framework",
+      "framework": "Recipe Ultra Deno",
+      "id": "recipe-ultra-deno",
+      "language": "TypeScript",
+      "name": "Ultra Deno"
+    },
+    {
+      "category": "framework",
+      "framework": "Recipe Umami",
+      "id": "recipe-umami",
+      "language": "Unknown",
+      "name": "Umami"
+    },
+    {
+      "category": "framework",
+      "framework": "Recipe Uptime Kuma",
+      "id": "recipe-uptime-kuma",
+      "language": "Unknown",
+      "name": "Uptime Kuma"
+    },
+    {
+      "category": "framework",
+      "framework": "Recipe Vapor",
+      "id": "recipe-vapor",
+      "language": "Unknown",
+      "name": "Vapor"
+    },
+    {
+      "category": "framework",
+      "framework": "Vue",
+      "id": "recipe-vue-nodejs",
+      "language": "JavaScript",
+      "name": "Vue Nodejs"
+    },
+    {
+      "category": "framework",
+      "framework": "Vue",
+      "id": "recipe-vue",
+      "language": "JavaScript",
+      "name": "Vue"
+    },
+    {
+      "category": "framework",
+      "framework": "WordPress",
+      "id": "recipe-wordpress",
+      "language": "Unknown",
+      "name": "Wordpress"
+    },
+    {
+      "category": "framework",
+      "framework": "Recipe Yew",
+      "id": "recipe-yew",
+      "language": "Unknown",
+      "name": "Yew"
+    },
+    {
+      "category": "framework",
+      "framework": "Recipe Zabbix",
+      "id": "recipe-zabbix",
+      "language": "Unknown",
+      "name": "Zabbix"
+    },
+    {
+      "category": "framework",
+      "framework": "Recipe Zerops Showcase",
+      "id": "recipe-zerops-showcase",
+      "language": "Unknown",
+      "name": "Zerops Showcase"
+    },
+    {
+      "category": "tool",
+      "framework": "S3browser",
+      "id": "s3browser",
+      "language": "Unknown",
+      "name": "S3browser"
+    },
+    {
+      "category": "framework",
+      "framework": "Start Commands Example",
+      "id": "start-commands-example",
+      "language": "Unknown",
+      "name": "Start Commands Example"
+    },
+    {
+      "category": "framework",
+      "framework": "Zerops Go",
+      "id": "zerops-go",
+      "language": "Go",
+      "name": "Zerops Go"
+    }
+  ],
+  "total": 128
+}

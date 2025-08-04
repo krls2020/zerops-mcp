@@ -1,0 +1,101 @@
+{
+  "patternId": "recipe-nestjs",
+  "name": "Nestjs",
+  "description": "NestJS application",
+  "framework": "NestJS",
+  "language": "Unknown",
+  "tags": [
+    "nestjs"
+  ],
+  "services": [
+    {
+      "enableSubdomainAccess": true,
+      "hostname": "api",
+      "priority": 5,
+      "type": "nodejs@20",
+      "verticalAutoscaling": {
+        "minFreeRamGB": 0.125,
+        "minRam": 0.25
+      }
+    },
+    {
+      "enableSubdomainAccess": true,
+      "hostname": "app",
+      "type": "static"
+    },
+    {
+      "hostname": "db",
+      "mode": "NON_HA",
+      "priority": 10,
+      "type": "postgresql@16"
+    },
+    {
+      "hostname": "storage",
+      "objectStoragePolicy": "public-read",
+      "objectStorageSize": 2,
+      "priority": 10,
+      "type": "object-storage"
+    },
+    {
+      "enableSubdomainAccess": true,
+      "hostname": "adminer",
+      "type": "php-apache@8.1"
+    },
+    {
+      "enableSubdomainAccess": true,
+      "hostname": "mailpit",
+      "type": "go@1"
+    }
+  ],
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "base": "nodejs@20",
+          "buildCommands": [
+            "npm i",
+            "npm run build"
+          ],
+          "deployFiles": [
+            "./dist",
+            "node_modules",
+            "package.json"
+          ]
+        },
+        "run": {
+          "base": "nodejs@20",
+          "envVariables": {
+            "DATABASE_HOST": "db",
+            "DATABASE_NAME": "db",
+            "DATABASE_PASSWORD": "${db_password}",
+            "DATABASE_PORT": "5432",
+            "DATABASE_USERNAME": "db",
+            "SMTP_EMAIL_FROM": "recipe@zerops.io",
+            "SMTP_HOST": "mailpit",
+            "SMTP_PASS": "",
+            "SMTP_PORT": "1025",
+            "SMTP_USER": "",
+            "STORAGE_ACCESS_KEY_ID": "${storage_accessKeyId}",
+            "STORAGE_ENDPOINT": "${storage_apiUrl}",
+            "STORAGE_REGION": "us-east-1",
+            "STORAGE_S3_BUCKET_NAME": "${storage_bucketName}",
+            "STORAGE_SECRET_ACCESS_KEY": "${storage_secretAccessKey}"
+          },
+          "initCommands": [
+            "zsc execOnce $ZEROPS_appVersionId npm run typeorm:migrate"
+          ],
+          "ports": [
+            {
+              "httpSupport": true,
+              "port": 3000
+            }
+          ],
+          "start": "npm run start:prod"
+        },
+        "setup": "api"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-nestjs-main",
+  "deploymentType": "local"
+}

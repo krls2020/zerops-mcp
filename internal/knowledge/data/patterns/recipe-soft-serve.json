@@ -1,0 +1,39 @@
+{
+  "patternId": "recipe-soft-serve",
+  "name": "Soft Serve",
+  "description": "Recipe Soft Serve application",
+  "framework": "Recipe Soft Serve",
+  "language": "Unknown",
+  "tags": [],
+  "services": null,
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "base": "ubuntu@22.04",
+          "deployFiles": [
+            "/"
+          ],
+          "prepareCommands": [
+            "sudo mkdir -p /etc/apt/keyrings",
+            "curl -fsSL https://repo.charm.sh/apt/gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/charm.gpg",
+            "echo \"deb [signed-by=/etc/apt/keyrings/charm.gpg] https://repo.charm.sh/apt/ * *\" | sudo tee /etc/apt/sources.list.d/charm.list",
+            "sudo apt update \u0026\u0026 sudo apt install soft-serve -y"
+          ]
+        },
+        "run": {
+          "base": "ubuntu@22.04",
+          "envVariables": {
+            "SOFT_SERVE_DATA_PATH": "/var/lib/soft-serve soft serve",
+            "SOFT_SERVE_DB_DATA_SOURCE": "postgresql://${user}:${password}@db:5432",
+            "SOFT_SERVE_DB_DRIVER": "postgres"
+          },
+          "start": "ssh localhost -i ~/.ssh/id_ed25519 -p 23231 help"
+        },
+        "setup": "softserve"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-soft-serve-main",
+  "deploymentType": "local"
+}

@@ -1,0 +1,94 @@
+{
+  "patternId": "recipe-prometheus",
+  "name": "Prometheus",
+  "description": "Recipe Prometheus application",
+  "framework": "Recipe Prometheus",
+  "language": "Unknown",
+  "tags": [],
+  "services": [
+    {
+      "hostname": "storage",
+      "mode": "NON_HA",
+      "priority": 1,
+      "type": "shared-storage"
+    },
+    {
+      "enableSubdomainAccess": true,
+      "hostname": "app",
+      "maxContainers": 1,
+      "type": "go@1"
+    },
+    {
+      "enableSubdomainAccess": true,
+      "hostname": "prometheus",
+      "maxContainers": 1,
+      "mount": [
+        "storage"
+      ],
+      "type": "alpine@3.20"
+    }
+  ],
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "deployFiles": [
+            "prometheus.yml"
+          ]
+        },
+        "deploy": {
+          "temporaryShutdown": true
+        },
+        "run": {
+          "base": "alpine@3.20",
+          "envVariables": {
+            "TSDB_PATH": "/mnt/storage/prometheus"
+          },
+          "os": "alpine",
+          "ports": [
+            {
+              "httpSupport": true,
+              "port": 9090
+            }
+          ],
+          "prepareCommands": [
+            "sudo apk update \u0026\u0026 sudo apk upgrade",
+            "wget https://github.com/prometheus/prometheus/releases/download/v3.2.1/prometheus-3.2.1.linux-amd64.tar.gz",
+            "tar -xvf prometheus-3.2.1.linux-amd64.tar.gz",
+            "mv prometheus-3.2.1.linux-amd64 /var/www/prometheus",
+            "rm prometheus-3.2.1.linux-amd64.tar.gz"
+          ],
+          "start": "bash -c 'mkdir -p $TSDB_PATH \u0026\u0026 /var/www/prometheus/prometheus --config.file /var/www/prometheus.yml --storage.tsdb.path $TSDB_PATH --log.level=debug'"
+        },
+        "setup": "prometheus"
+      },
+      {
+        "build": {
+          "base": "go@latest",
+          "buildCommands": [
+            "go build -o app main.go"
+          ],
+          "cache": true,
+          "deployFiles": [
+            "app"
+          ],
+          "os": "alpine"
+        },
+        "run": {
+          "base": "alpine@latest",
+          "os": "alpine",
+          "ports": [
+            {
+              "httpSupport": true,
+              "port": 2112
+            }
+          ],
+          "start": "./app"
+        },
+        "setup": "app"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-prometheus-main",
+  "deploymentType": "local"
+}

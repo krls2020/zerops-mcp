@@ -1,0 +1,128 @@
+{
+  "bestPractices": [
+    "Use Gunicorn with multiple workers",
+    "Enable Django's security middleware",
+    "Use environment variables for secrets",
+    "Cache sessions in Valkey",
+    "Use whitenoise for static files"
+  ],
+  "commonIssues": [
+    {
+      "issue": "Static files not serving",
+      "solution": "Use whitenoise or create separate static service"
+    },
+    {
+      "issue": "Module not found",
+      "solution": "Ensure requirements.txt is in addToRunPrepare"
+    },
+    {
+      "issue": "Database connection fails",
+      "solution": "Use DATABASE_URL format or individual env vars"
+    }
+  ],
+  "description": "Production Django setup with PostgreSQL, Valkey cache, and Gunicorn",
+  "exampleSettings": {
+    "CACHES": {
+      "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": "os.environ.get('REDIS_URL')"
+      }
+    },
+    "DATABASES": {
+      "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "HOST": "os.environ.get('DB_HOST')",
+        "NAME": "os.environ.get('DB_NAME')",
+        "PASSWORD": "os.environ.get('DB_PASSWORD')",
+        "PORT": "os.environ.get('DB_PORT', '5432')",
+        "USER": "os.environ.get('DB_USER')"
+      }
+    }
+  },
+  "framework": "Django",
+  "language": "Python",
+  "name": "Django Full Stack",
+  "patternId": "django-full-stack",
+  "services": [
+    {
+      "enableSubdomainAccess": true,
+      "envVariables": {
+        "ALLOWED_HOSTS": "${zeropsSubdomain},*.yourdomain.com",
+        "DATABASE_URL": "postgres://${db_user}:${db_password}@${db_hostname}:${db_port}/${db_dbName}",
+        "DEBUG": "False",
+        "DJANGO_SETTINGS_MODULE": "myproject.settings.production",
+        "REDIS_URL": "redis://${cache_hostname}:${cache_port}/0"
+      },
+      "hostname": "app",
+      "maxContainers": 5,
+      "minContainers": 2,
+      "mode": "HA",
+      "ports": [
+        {
+          "httpSupport": true,
+          "port": 8000
+        }
+      ],
+      "type": "python@3.12"
+    },
+    {
+      "hostname": "db",
+      "mode": "HA",
+      "type": "postgresql@16"
+    },
+    {
+      "hostname": "cache",
+      "mode": "NON_HA",
+      "type": "valkey@7.2"
+    }
+  ],
+  "setupInstructions": [
+    "Configure settings.py for production",
+    "Set SECRET_KEY as environment variable",
+    "Configure ALLOWED_HOSTS",
+    "Set up static files with whitenoise",
+    "Configure database migrations"
+  ],
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "addToRunPrepare": [
+            "requirements.txt"
+          ],
+          "base": "python@3.12",
+          "buildCommands": [
+            "python -m pip install --upgrade pip",
+            "python -m pip install -r requirements.txt",
+            "python manage.py collectstatic --noinput"
+          ],
+          "deployFiles": [
+            ".",
+            "!venv",
+            "!*.pyc",
+            "!__pycache__",
+            "!.git",
+            "!.env"
+          ]
+        },
+        "run": {
+          "base": "python@3.12",
+          "initCommands": [
+            "python manage.py migrate --noinput"
+          ],
+          "ports": [
+            {
+              "httpSupport": true,
+              "port": 8000
+            }
+          ],
+          "prepareCommands": [
+            "python -m pip install -r requirements.txt"
+          ],
+          "start": "gunicorn myproject.wsgi:application --bind 0.0.0.0:8000 --workers 4"
+        },
+        "setup": "app"
+      }
+    ]
+  }
+}

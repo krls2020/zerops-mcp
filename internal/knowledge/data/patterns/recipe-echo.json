@@ -1,0 +1,60 @@
+{
+  "patternId": "recipe-echo",
+  "name": "Echo",
+  "description": "Recipe Echo application",
+  "framework": "Recipe Echo",
+  "language": "Unknown",
+  "tags": [],
+  "services": [
+    {
+      "enableSubdomainAccess": true,
+      "hostname": "app",
+      "type": "go@1"
+    }
+  ],
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "base": "go@latest",
+          "buildCommands": [
+            "go build -v -o app main.go"
+          ],
+          "deployFiles": [
+            "static/",
+            "app"
+          ]
+        },
+        "run": {
+          "envVariables": {
+            "DB_HOST": "db",
+            "DB_PASSWORD": "$db_password",
+            "DB_PORT": "$db_port",
+            "DB_USER": "$db_user",
+            "REDIS_HOST": "redis",
+            "REDIS_PORT": "$redis_port",
+            "S3_ACCESS_KEY_ID": "$storage_accessKeyId",
+            "S3_BUCKET": "$storage_bucketName",
+            "S3_ENDPOINT": "$storage_apiUrl",
+            "S3_SECRET_ACCESS_KEY": "$storage_secretAccessKey",
+            "SMTP_HOST": "mailpit",
+            "SMTP_PORT": "1025"
+          },
+          "initCommands": [
+            "zsc execOnce seed -- /var/www/app -seed"
+          ],
+          "ports": [
+            {
+              "httpSupport": true,
+              "port": 8080
+            }
+          ],
+          "start": "/var/www/app"
+        },
+        "setup": "app"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-echo-main",
+  "deploymentType": "local"
+}

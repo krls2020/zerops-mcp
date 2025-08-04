@@ -1,0 +1,39 @@
+{
+  "patternId": "recipe-hono-deno",
+  "name": "Hono Deno",
+  "description": "Hono application",
+  "framework": "Hono",
+  "language": "TypeScript",
+  "tags": [
+    "hono",
+    "deno"
+  ],
+  "services": null,
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "base": "deno@1",
+          "deployFiles": [
+            "deno.lock",
+            "main.ts",
+            "deno.json"
+          ]
+        },
+        "run": {
+          "base": "deno@1",
+          "ports": [
+            {
+              "httpSupport": true,
+              "port": 8000
+            }
+          ],
+          "start": "deno task start"
+        },
+        "setup": "app"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-hono-deno-main",
+  "deploymentType": "local"
+}

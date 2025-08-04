@@ -1,0 +1,45 @@
+{
+  "patternId": "recipe-elysia",
+  "name": "Elysia",
+  "description": "Elysia application",
+  "framework": "Elysia",
+  "language": "Unknown",
+  "tags": [
+    "elysia"
+  ],
+  "services": null,
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "base": "bun@1.1",
+          "buildCommands": [
+            "bun i --production"
+          ],
+          "deployFiles": [
+            "./"
+          ],
+          "prepareCommands": [
+            "curl -fsSL https://bun.sh/install | bash"
+          ]
+        },
+        "run": {
+          "base": "bun@1.1",
+          "ports": [
+            {
+              "httpSupport": true,
+              "port": 3000
+            }
+          ],
+          "prepareCommands": [
+            "curl -fsSL https://bun.sh/install | bash"
+          ],
+          "start": "NODE_ENV=production bun src/index.ts"
+        },
+        "setup": "elysia"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-elysia-main",
+  "deploymentType": "local"
+}

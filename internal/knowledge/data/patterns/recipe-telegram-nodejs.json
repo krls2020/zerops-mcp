@@ -1,0 +1,33 @@
+{
+  "patternId": "recipe-telegram-nodejs",
+  "name": "Telegram Nodejs",
+  "description": "Recipe Telegram Nodejs application",
+  "framework": "Recipe Telegram Nodejs",
+  "language": "JavaScript",
+  "tags": [
+    "nodejs"
+  ],
+  "services": null,
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "base": "nodejs@20",
+          "buildCommands": [
+            "pnpm i"
+          ],
+          "deployFiles": [
+            "/"
+          ]
+        },
+        "run": {
+          "base": "nodejs@20",
+          "start": "pnpm start"
+        },
+        "setup": "bot"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-telegram-nodejs-main",
+  "deploymentType": "local"
+}

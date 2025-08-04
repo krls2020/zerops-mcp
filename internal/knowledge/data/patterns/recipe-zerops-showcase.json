@@ -1,0 +1,315 @@
+{
+  "patternId": "recipe-zerops-showcase",
+  "name": "Zerops Showcase",
+  "description": "Recipe Zerops Showcase application",
+  "framework": "Recipe Zerops Showcase",
+  "language": "Unknown",
+  "tags": [],
+  "services": [
+    {
+      "hostname": "objectstorage",
+      "objectStorageSize": 5,
+      "type": "object-storage"
+    },
+    {
+      "hostname": "sharedstorage",
+      "mode": "NON_HA",
+      "priority": 10,
+      "type": "sharedstorage"
+    },
+    {
+      "hostname": "keydb",
+      "mode": "NON_HA",
+      "type": "keydb@6"
+    },
+    {
+      "hostname": "valkey",
+      "mode": "NON_HA",
+      "type": "valkey@7.2"
+    },
+    {
+      "hostname": "elasticsearch",
+      "mode": "NON_HA",
+      "type": "elasticsearch@8.16"
+    },
+    {
+      "hostname": "mariadb",
+      "mode": "NON_HA",
+      "type": "mariadb@10.6"
+    },
+    {
+      "hostname": "postgresql",
+      "mode": "NON_HA",
+      "type": "postgresql@16"
+    },
+    {
+      "hostname": "kafka",
+      "mode": "NON_HA",
+      "type": "kafka@3.8"
+    },
+    {
+      "hostname": "qdrant",
+      "mode": "NON_HA",
+      "type": "qdrant@1.12"
+    },
+    {
+      "hostname": "meilisearch",
+      "mode": "NON_HA",
+      "type": "meilisearch@1.10"
+    },
+    {
+      "hostname": "nats",
+      "mode": "NON_HA",
+      "type": "nats@2.10"
+    },
+    {
+      "enableSubdomainAccess": true,
+      "hostname": "build",
+      "type": "alpine@3.21"
+    },
+    {
+      "hostname": "buildwithenvs",
+      "type": "alpine@3.21"
+    },
+    {
+      "hostname": "buildwithprepare",
+      "type": "alpine@3.21"
+    },
+    {
+      "hostname": "addtorunprepare",
+      "type": "alpine@3.21"
+    },
+    {
+      "hostname": "runwithinit",
+      "type": "alpine@3.21"
+    },
+    {
+      "hostname": "runwithenvs",
+      "type": "alpine@3.21"
+    },
+    {
+      "hostname": "runwithreplacer",
+      "type": "alpine@3.21"
+    },
+    {
+      "hostname": "mounted",
+      "mount": [
+        "sharedstorage"
+      ],
+      "type": "alpine@3.21"
+    }
+  ],
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "base": "go@latest",
+          "buildCommands": [
+            "go build -o app main.go"
+          ],
+          "deployFiles": [
+            "app"
+          ]
+        },
+        "deploy": {
+          "readinessCheck": {
+            "httpGet": {
+              "path": "/health",
+              "port": 8080
+            }
+          }
+        },
+        "run": {
+          "ports": [
+            {
+              "httpSupport": true,
+              "port": 8080
+            }
+          ],
+          "start": "./app serve"
+        },
+        "setup": "build"
+      },
+      {
+        "build": {
+          "base": "go@latest",
+          "buildCommands": [
+            "echo \"$COMMIT\"",
+            "go build -ldflags \"-X main.Commit=$COMMIT\" -o app main.go"
+          ],
+          "deployFiles": [
+            "app"
+          ],
+          "envVariables": {
+            "COMMIT": "my-commit"
+          }
+        },
+        "deploy": {
+          "readinessCheck": {
+            "exec": {
+              "command": "[ \"$(/var/www/app commit)\" == \"my-commit\" ]"
+            }
+          }
+        },
+        "run": {
+          "start": "./app serve"
+        },
+        "setup": "buildwithenvs"
+      },
+      {
+        "build": {
+          "base": "go@latest",
+          "buildCommands": [
+            "jq --version",
+            "go build -o app main.go"
+          ],
+          "deployFiles": [
+            "app"
+          ],
+          "prepareCommands": [
+            "sudo apk update",
+            "sudo apk add jq"
+          ]
+        },
+        "deploy": {
+          "readinessCheck": {
+            "httpGet": {
+              "path": "/health",
+              "port": 8080
+            }
+          }
+        },
+        "run": {
+          "start": "./app serve"
+        },
+        "setup": "buildwithprepare"
+      },
+      {
+        "build": {
+          "addToRunPrepare": [
+            "app"
+          ],
+          "base": "go@latest",
+          "buildCommands": [
+            "go build -o app main.go"
+          ],
+          "deployFiles": [
+            "app"
+          ]
+        },
+        "deploy": {
+          "readinessCheck": {
+            "exec": {
+              "command": "cat /var/www/migration.txt"
+            }
+          }
+        },
+        "run": {
+          "prepareCommands": [
+            "./app migrate"
+          ],
+          "start": "./app serve"
+        },
+        "setup": "addtorunprepare"
+      },
+      {
+        "build": {
+          "base": "go@latest",
+          "buildCommands": [
+            "go build -o app main.go"
+          ],
+          "deployFiles": [
+            "app"
+          ]
+        },
+        "deploy": {
+          "readinessCheck": {
+            "httpGet": {
+              "path": "/health",
+              "port": 8080
+            }
+          }
+        },
+        "run": {
+          "initCommands": [
+            "mkdir -p ./cache"
+          ],
+          "start": "./app serve --check-cache-dir"
+        },
+        "setup": "runwithinit"
+      },
+      {
+        "build": {
+          "base": "go@latest",
+          "buildCommands": [
+            "go build -o app main.go"
+          ],
+          "deployFiles": [
+            "app"
+          ]
+        },
+        "deploy": {
+          "readinessCheck": {
+            "httpGet": {
+              "path": "/health",
+              "port": 8081
+            }
+          }
+        },
+        "run": {
+          "envVariables": {
+            "APP_PORT": 8081
+          },
+          "start": "./app serve"
+        },
+        "setup": "runwithenvs"
+      },
+      {
+        "build": {
+          "base": "go@latest",
+          "buildCommands": [
+            "go build -o app main.go"
+          ],
+          "deployFiles": [
+            "app",
+            "replace.env"
+          ]
+        },
+        "deploy": {
+          "readinessCheck": {
+            "httpGet": {
+              "path": "/health",
+              "port": 8081
+            }
+          }
+        },
+        "run": {
+          "envReplace": {
+            "delimiter": "%%",
+            "target": [
+              "replace.env"
+            ]
+          },
+          "envVariables": {
+            "OTHER_PORT_ENV": 8081
+          },
+          "start": "./app serve"
+        },
+        "setup": "runwithreplacer"
+      },
+      {
+        "run": {
+          "initCommands": [
+            "ls -la /mnt/sharedstorage",
+            "date \u003e\u003e /mnt/sharedstorage/date.txt",
+            "cat /mnt/sharedstorage/date.txt"
+          ],
+          "start": "zsc noop"
+        },
+        "setup": "mounted"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-zerops-showcase-main",
+  "deploymentType": "local"
+}

@@ -1,0 +1,41 @@
+{
+  "patternId": "recipe-python-hello-world",
+  "name": "Python Hello World",
+  "description": "Hello World application",
+  "framework": "Hello World",
+  "language": "Python",
+  "tags": [
+    "python"
+  ],
+  "services": null,
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "addToRunPrepare": [
+            "app/requirements.txt"
+          ],
+          "base": "python@3.11",
+          "deploy": [
+            "app/~hello.py"
+          ]
+        },
+        "run": {
+          "ports": [
+            {
+              "httpSupport": true,
+              "port": 8080
+            }
+          ],
+          "prepareCommands": [
+            "python3 -m pip install --ignore-installed -r app/requirements.txt"
+          ],
+          "start": "python3 hello.py"
+        },
+        "setup": "helloworld"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-python-hello-world-main",
+  "deploymentType": "local"
+}

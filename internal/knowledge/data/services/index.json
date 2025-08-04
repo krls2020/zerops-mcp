@@ -1,0 +1,193 @@
+{
+  "services": {
+    "runtime": {
+      "nodejs": {
+        "file": "nodejs.json",
+        "description": "Node.js runtime for JavaScript and TypeScript applications",
+        "versions": ["20", "18", "16"]
+      },
+      "php": {
+        "file": "php.json",
+        "description": "PHP runtime with Apache or Nginx support",
+        "versions": ["8.3", "8.2", "8.1", "8.0", "7.4"],
+        "variants": ["apache", "nginx"]
+      },
+      "python": {
+        "file": "python.json",
+        "description": "Python runtime for web applications and APIs",
+        "versions": ["3.12", "3.11", "3.10", "3.9", "3.8"]
+      },
+      "go": {
+        "file": "go.json",
+        "description": "Go runtime for high-performance applications",
+        "versions": ["1.22", "1.21", "1.20"]
+      },
+      "dotnet": {
+        "file": "dotnet.json",
+        "description": ".NET runtime for C# and F# applications",
+        "versions": ["8.0", "7.0", "6.0"]
+      },
+      "rust": {
+        "file": "rust.json",
+        "description": "Rust runtime for high-performance system applications",
+        "versions": ["1"]
+      },
+      "java": {
+        "file": "java.json",
+        "description": "Java runtime for Spring Boot and other JVM applications",
+        "versions": ["21", "17", "11", "8"]
+      },
+      "ruby": {
+        "file": "ruby.json",
+        "description": "Ruby runtime for Rails and other Ruby applications",
+        "versions": ["3.3", "3.2", "3.1", "3.0"]
+      },
+      "container": {
+        "file": "container.json",
+        "description": "Run custom Docker containers with full control",
+        "versions": ["1"]
+      }
+    },
+    "database": {
+      "postgresql": {
+        "file": "postgresql.json",
+        "description": "PostgreSQL relational database",
+        "versions": ["16", "15", "14", "13", "12"],
+        "modes": ["HA", "NON_HA"]
+      },
+      "mariadb": {
+        "file": "mariadb.json",
+        "description": "MariaDB relational database (MySQL-compatible)",
+        "versions": ["10.6"],
+        "modes": ["HA", "NON_HA"]
+      },
+      "mongodb": {
+        "file": "mongodb.json",
+        "description": "NoSQL document database for flexible data models",
+        "versions": ["7", "6", "5"],
+        "modes": ["HA", "NON_HA"]
+      },
+      "valkey": {
+        "file": "valkey.json",
+        "description": "High-performance key-value store (Redis-compatible fork)",
+        "versions": ["7"],
+        "modes": ["HA", "NON_HA"]
+      },
+      "keydb": {
+        "file": "keydb.json",
+        "description": "Multi-threaded Redis-compatible key-value store",
+        "versions": ["6"],
+        "modes": ["HA", "NON_HA"]
+      },
+      "qdrant": {
+        "file": "qdrant.json",
+        "description": "Vector database for AI applications and similarity search",
+        "versions": ["1"],
+        "modes": ["NON_HA"]
+      },
+      "couchbase": {
+        "file": "couchbase.json",
+        "description": "Distributed NoSQL document database with caching and search",
+        "versions": ["7"],
+        "modes": ["HA", "NON_HA"]
+      }
+    },
+    "search": {
+      "elasticsearch": {
+        "file": "elasticsearch.json",
+        "description": "Full-text search and analytics engine",
+        "versions": ["8"],
+        "modes": ["HA", "NON_HA"]
+      },
+      "meilisearch": {
+        "file": "meilisearch.json",
+        "description": "Lightning-fast search engine with instant search capabilities",
+        "versions": ["1"],
+        "modes": ["NON_HA"]
+      },
+      "typesense": {
+        "file": "typesense.json",
+        "description": "Fast, typo-tolerant search engine optimized for instant search experiences",
+        "versions": ["26"],
+        "modes": ["HA", "NON_HA"]
+      }
+    },
+    "messaging": {
+      "nats": {
+        "file": "nats.json",
+        "description": "High-performance messaging system for cloud-native applications",
+        "versions": ["2"],
+        "modes": ["HA", "NON_HA"]
+      },
+      "kafka": {
+        "file": "kafka.json",
+        "description": "Distributed event streaming platform for high-throughput data pipelines",
+        "versions": ["3"],
+        "modes": ["HA"]
+      },
+      "rabbitmq": {
+        "file": "rabbitmq.json",
+        "description": "Message broker for reliable message queuing and routing",
+        "versions": ["3"],
+        "modes": ["HA", "NON_HA"]
+      }
+    },
+    "web": {
+      "static": {
+        "file": "static.json",
+        "description": "Static file hosting with Nginx for SPAs, websites, and assets",
+        "versions": ["1"],
+        "modes": ["NON_HA"]
+      }
+    },
+    "storage": {
+      "object-storage": {
+        "file": "object-storage.json",
+        "description": "S3-compatible object storage service",
+        "versions": ["1"],
+        "modes": ["NON_HA"]
+      }
+    }
+  },
+  "categories": {
+    "runtime": {
+      "description": "Application runtime environments",
+      "services": ["nodejs", "php", "python", "go", "dotnet", "rust", "java", "ruby", "container"]
+    },
+    "database": {
+      "description": "Data storage solutions",
+      "services": ["postgresql", "mariadb", "mongodb", "valkey", "keydb", "qdrant", "couchbase"]
+    },
+    "search": {
+      "description": "Search and indexing engines",
+      "services": ["elasticsearch", "meilisearch", "typesense"]
+    },
+    "messaging": {
+      "description": "Message brokers and streaming platforms",
+      "services": ["nats", "kafka", "rabbitmq"]
+    },
+    "web": {
+      "description": "Web serving and CDN",
+      "services": ["static"]
+    },
+    "storage": {
+      "description": "Object and file storage services",
+      "services": ["object-storage"]
+    }
+  },
+  "serviceNaming": {
+    "rules": [
+      "Service names (hostnames) can only contain lowercase letters and numbers",
+      "No hyphens, underscores, or special characters allowed",
+      "Examples: app, db01, cache1, api",
+      "Bad examples: my-app, web_server, App1"
+    ]
+  },
+  "projectNaming": {
+    "rules": [
+      "Project names have no restrictions",
+      "Can contain any characters including spaces and special characters",
+      "Examples: my-project, MyApp-2024, Test Project!"
+    ]
+  }
+}

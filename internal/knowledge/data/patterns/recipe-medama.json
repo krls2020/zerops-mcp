@@ -1,0 +1,41 @@
+{
+  "patternId": "recipe-medama",
+  "name": "Medama",
+  "description": "Medama service for Zerops",
+  "framework": "Recipe Medama",
+  "language": "Unknown",
+  "tags": [],
+  "services": null,
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "deployFiles": [
+            "."
+          ]
+        },
+        "run": {
+          "base": "go@1",
+          "initCommands": [
+            "yes | sudo unzip -q /var/www/medama-v0.4.4-linux-amd64.zip",
+            "sudo chmod +x /var/www/medama_linux_amd64"
+          ],
+          "os": "ubuntu",
+          "ports": [
+            {
+              "httpSupport": true,
+              "port": 8080
+            }
+          ],
+          "prepareCommands": [
+            "sudo wget -P /var/www/ https://github.com/medama-io/medama/releases/download/v0.4.4/medama-v0.4.4-linux-amd64.zip"
+          ],
+          "start": "sudo /var/www/medama_linux_amd64 start -analyticsdb /mnt/sharedstorage0/me_analytics.db -appdb /mnt/sharedstorage0/me_meta.db"
+        },
+        "setup": "app"
+      }
+    ]
+  },
+  "sourceRecipe": "recipe-medama-main",
+  "deploymentType": "git"
+}

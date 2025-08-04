@@ -1,0 +1,116 @@
+{
+  "bestPractices": [
+    "Use standalone output for smaller deployments",
+    "Enable ISR for dynamic content",
+    "Cache static assets aggressively",
+    "Use environment variables for configuration",
+    "Implement proper error boundaries"
+  ],
+  "commonIssues": [
+    {
+      "issue": "Build fails with out of memory",
+      "solution": "Add NODE_OPTIONS='--max-old-space-size=4096' to build"
+    },
+    {
+      "issue": "Static assets not loading",
+      "solution": "Ensure public folder is included in deployFiles"
+    },
+    {
+      "issue": "API routes not working",
+      "solution": "Check Next.js standalone output configuration"
+    }
+  ],
+  "description": "Next.js with SSR/SSG, PostgreSQL, and optimized deployment",
+  "framework": "Next.js",
+  "language": "JavaScript/TypeScript",
+  "name": "Next.js Full Stack",
+  "nextConfig": {
+    "experimental": {
+      "outputFileTracingRoot": "./"
+    },
+    "images": {
+      "domains": [
+        "yourdomain.com"
+      ]
+    },
+    "output": "standalone"
+  },
+  "patternId": "nextjs-full-stack",
+  "services": [
+    {
+      "enableSubdomainAccess": true,
+      "envVariables": {
+        "DATABASE_URL": "postgres://${db_user}:${db_password}@${db_hostname}:${db_port}/${db_dbName}",
+        "NEXTAUTH_URL": "${zeropsSubdomain}",
+        "NEXT_PUBLIC_API_URL": "${zeropsSubdomain}",
+        "NODE_ENV": "production"
+      },
+      "hostname": "app",
+      "maxContainers": 5,
+      "minContainers": 2,
+      "mode": "HA",
+      "ports": [
+        {
+          "httpSupport": true,
+          "port": 3000
+        }
+      ],
+      "type": "nodejs@20"
+    },
+    {
+      "hostname": "db",
+      "mode": "HA",
+      "type": "postgresql@16"
+    }
+  ],
+  "setupInstructions": [
+    "Configure environment variables",
+    "Set up database connection with Prisma/TypeORM",
+    "Configure next.config.js for production",
+    "Implement health check endpoint"
+  ],
+  "zeropsYml": {
+    "zerops": [
+      {
+        "build": {
+          "base": "nodejs@20",
+          "buildCommands": [
+            "npm ci",
+            "npm run build"
+          ],
+          "cache": [
+            "node_modules",
+            ".next/cache"
+          ],
+          "deployFiles": [
+            ".next",
+            "public",
+            "package.json",
+            "package-lock.json",
+            "next.config.js",
+            "node_modules"
+          ]
+        },
+        "run": {
+          "base": "nodejs@20",
+          "healthCheck": {
+            "httpGet": {
+              "path": "/api/health",
+              "port": 3000
+            },
+            "initialDelaySeconds": 30,
+            "periodSeconds": 10
+          },
+          "ports": [
+            {
+              "httpSupport": true,
+              "port": 3000
+            }
+          ],
+          "start": "npm start"
+        },
+        "setup": "app"
+      }
+    ]
+  }
+}

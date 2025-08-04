@@ -1,0 +1,16 @@
+{
+  "runtime": "nodejs",
+  "displayName": "Node.js",
+  "versions": {
+    "available": ["20", "18", "16"],
+    "default": "20"
+  },
+  "buildConfig": {
+    "buildCommands": ["npm install", "npm run build"],
+    "deployFiles": ["./dist", "./node_modules", "./package.json"]
+  },
+  "runConfig": {
+    "startCommand": "npm start",
+    "port": 3000
+  }
+}
